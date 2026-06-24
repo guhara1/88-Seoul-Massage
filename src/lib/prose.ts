@@ -19,6 +19,76 @@ export function pick(seed: string, slot: string, variants: string[]): string {
   return variants[h % variants.length];
 }
 
+// ── 제목(H1/H2) 변형 ─────────────────────────────────────────────
+// 지역명·SEO 키워드(출장마사지·홈타이)는 유지하되 표현을 페이지마다 다르게.
+
+/** 시군구/구 H1 */
+export function h1Gu(seed: string, r: string): string {
+  return pick(seed, "h1.gu", [
+    `${r} 출장마사지 · ${r} 홈타이 지역별 예약 안내`,
+    `${r} 출장마사지·홈타이 — 생활권별 방문 예약 안내`,
+    `${r} 홈타이·출장마사지 지역 안내`,
+    `${r} 방문 출장마사지·홈타이 예약 가이드`,
+  ]);
+}
+
+/** 행정동 H1 */
+export function h1Dong(seed: string, d: string): string {
+  return pick(seed, "h1.dong", [
+    `${d} 출장마사지 · ${d} 홈타이 예약 안내`,
+    `${d} 출장마사지·홈타이 방문 예약 안내`,
+    `${d} 홈타이·출장마사지 생활권 안내`,
+    `${d} 방문 마사지 예약 — ${d} 출장·홈타이`,
+  ]);
+}
+
+/** 역 H1 */
+export function h1Station(seed: string, s: string): string {
+  return pick(seed, "h1.st", [
+    `${s} 출장마사지 · 역 주변 홈타이 예약 안내`,
+    `${s} 인근 출장마사지·홈타이 방문 안내`,
+    `${s} 역세권 홈타이·출장마사지 예약 가이드`,
+    `${s} 주변 출장마사지·홈타이 안내`,
+  ]);
+}
+
+/** "찾을 때 확인할 기준" 류 H2 (지역명만 들어가는 도입 H2) */
+export function h2Intro(seed: string, r: string, suffix = "에서"): string {
+  return pick(seed, "h2.intro", [
+    `${r}${suffix} 출장마사지를 찾을 때 먼저 확인할 기준`,
+    `${r} 출장마사지·홈타이 예약 전 확인 포인트`,
+    `${r}${suffix} 방문 관리를 고를 때 보는 기준`,
+    `${r} 출장마사지를 예약하기 전 살펴볼 점`,
+  ]);
+}
+
+/** "예약 전 확인사항" H2 */
+export function h2Reserve(seed: string, r: string): string {
+  return pick(seed, "h2.res", [
+    `${r} 홈타이 예약 전 확인사항`,
+    `${r} 방문 예약 전 점검 항목`,
+    `${r} 출장마사지 예약 시 확인할 것`,
+  ]);
+}
+
+/** "주변 방문 가능 지역" H2 */
+export function h2Access(seed: string, r: string): string {
+  return pick(seed, "h2.acc", [
+    `${r} 주변 방문 가능 지역`,
+    `${r}에서 방문할 수 있는 인접 지역`,
+    `${r} 방문 가능 동선과 인접 생활권`,
+  ]);
+}
+
+/** "주변 상권·주거 환경" H2 */
+export function h2Commerce(seed: string, r: string): string {
+  return pick(seed, "h2.com", [
+    `${r} 주변 상권·주거 환경`,
+    `${r}의 상권과 주거 분포`,
+    `${r} 생활권 — 상권·주거 구성`,
+  ]);
+}
+
 /** 여러 슬롯에서 변형을 골라 이어붙인다 (문단 조립) */
 export function compose(
   seed: string,

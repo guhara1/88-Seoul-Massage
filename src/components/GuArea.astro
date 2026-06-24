@@ -21,7 +21,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
-import { guIntro, guReserveIntro } from "../lib/prose";
+import { guIntro, guReserveIntro, h1Gu, h2Intro } from "../lib/prose";
 
 interface Props {
   sidoSlug: string;
@@ -119,7 +119,7 @@ const schema = [
   <section class="section" style="padding:8px 0 24px">
     <div class="container prose">
       <span class="eyebrow">{sidoName(sidoSlug)} {city.regionName} · {gu.regionName}</span>
-      <h1>{gu.regionName} 출장마사지 · {gu.regionName} 홈타이 예약 안내</h1>
+      <h1>{h1Gu(guSeed, gu.regionName)}</h1>
       <p class="hero__sub" style="color:var(--text-soft)">
         {gu.contentFocus} {gu.regionName}의 행정동별 방문 가능 지역과 예약 전
         확인사항을 안내합니다.
@@ -198,7 +198,7 @@ const schema = [
   <!-- 본문 -->
   <section class="section">
     <div class="container prose">
-      <h2>{city.regionName} {gu.regionName}에서 출장마사지를 찾을 때</h2>
+      <h2>{h2Intro(guSeed, `${city.regionName} ${gu.regionName}`)}</h2>
       {guAreaIntro.map((para) => <p>{para}</p>)}
       <p>{guAreaReserve}</p>
       <p>

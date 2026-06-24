@@ -18,7 +18,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
 import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
-import { stationIntro, stationLife, stationAccess, stationFare, stationFareTail, stationVisitLead } from "../../../lib/prose";
+import { stationIntro, stationLife, stationAccess, stationFare, stationFareTail, stationVisitLead, h1Station, h2Intro, h2Access } from "../../../lib/prose";
 
 export function getStaticPaths() {
   return stations.map((st) => ({
@@ -87,6 +87,9 @@ const stAccessText = stationAccess(stSeed, svars);
 const stFareText = stationFare(stSeed, svars);
 const stFareTailText = stationFareTail(stSeed, svars);
 const stVisitLeadText = stationVisitLead(stSeed, svars);
+const h1Text = h1Station(stSeed, st.stationName);
+const h2IntroText = h2Intro(stSeed, st.stationName, " 주변에서");
+const h2AccessText = h2Access(stSeed, st.stationName);
 
 const schema = noindex
   ? []
@@ -126,9 +129,9 @@ const schema = noindex
   <section class="section" style="padding-top:8px">
     <div class="container prose">
       <span class="eyebrow">{sidoName(st.stationGroup)} · {st.sigungu}</span>
-      <h1>{st.stationName} 출장마사지 · 역 주변 홈타이 예약 안내</h1>
+      <h1>{h1Text}</h1>
 
-      <h2>{st.stationName} 주변에서 출장마사지를 찾을 때 확인할 기준</h2>
+      <h2>{h2IntroText}</h2>
       <p>{stIntroText}</p>
 
       <h2>{st.stationName} 인근 생활권 안내</h2>
@@ -138,7 +141,7 @@ const schema = noindex
       </ul>
       <p>{stLifeText}</p>
 
-      <h2>{st.stationName} 주변 방문 가능 지역</h2>
+      <h2>{h2AccessText}</h2>
       <p>{stAccessText}</p>
       <table class="info-table">
         <tbody>
