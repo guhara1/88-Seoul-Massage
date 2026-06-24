@@ -1,5 +1,4 @@
-# build output
-dist/
+# build output (Cloudflare Pages가 빌드 없이 서빙하도록 dist를 추적합니다)
 .output/
 
 # dependencies

@@ -1,0 +1,20 @@
+# 88서울마사지 — 모든 페이지 색인 허용 (noindex 없음)
+User-agent: *
+Allow: /
+
+# 네이버 검색 로봇
+User-agent: Yeti
+Allow: /
+
+# 빙 / IndexNow
+User-agent: bingbot
+Allow: /
+
+# 구글
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://kcwomenshealth.com/sitemap.xml
+
+# IndexNow key: 7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b
+# https://kcwomenshealth.com/indexnow-key.txt
