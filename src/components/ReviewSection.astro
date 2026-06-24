@@ -1,0 +1,238 @@
+---
+import { SITE } from "../lib/site";
+
+interface Props {
+  areaName: string;
+  reviews: Array<{
+    author: string;
+    rating: number;
+    date: string;
+    title: string;
+    content: string;
+  }>;
+}
+
+const { areaName, reviews } = Astro.props;
+
+const avgRating = reviews.length > 0
+  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+  : 0;
+
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+};
+---
+
+<section class="section section--soft">
+  <div class="container prose">
+    <h2>{areaName} 고객 후기</h2>
+
+    <div class="rating-summary">
+      <div class="rating-box">
+        <div class="rating-score">{avgRating}</div>
+        <div class="stars">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span class={`star ${i < Math.round(parseFloat(avgRating as unknown as string)) ? "filled" : ""}`}>★</span>
+          ))}
+        </div>
+        <p class="rating-count">{reviews.length}개의 후기</p>
+      </div>
+
+      <div class="rating-bar">
+        <div class="bar-item">
+          <span class="bar-label">5점</span>
+          <div class="bar">
+            <div class="bar-fill" style={{width: `${(reviews.filter(r => r.rating === 5).length / reviews.length) * 100}%`}}></div>
+          </div>
+          <span class="bar-count">{reviews.filter(r => r.rating === 5).length}개</span>
+        </div>
+        <div class="bar-item">
+          <span class="bar-label">4점</span>
+          <div class="bar">
+            <div class="bar-fill" style={{width: `${(reviews.filter(r => r.rating === 4).length / reviews.length) * 100}%`}}></div>
+          </div>
+          <span class="bar-count">{reviews.filter(r => r.rating === 4).length}개</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews-list">
+      {reviews.map((review) => (
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-author">
+              <strong>{review.author}</strong>
+              <span class="review-date">{formatDate(review.date)}</span>
+            </div>
+            <div class="stars">
+              {Array.from({ length: 5 }, (_, i) => (
+                <span class={`star ${i < review.rating ? "filled" : ""}`}>★</span>
+              ))}
+            </div>
+          </div>
+          <h3 class="review-title">{review.title}</h3>
+          <p class="review-content">{review.content}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="notice notice--info">
+      <div class="notice__title">후기 정책 안내</div>
+      <p style="margin:0">
+        실제 이용자의 성실한 후기를 기반으로 작성되었습니다. 허위 후기나 선정적 표현은 없으며, {areaName} 출장마사지 예약은 <a href={SITE.phoneHref}>{SITE.phone}</a>으로 문의하시면 됩니다.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rating-summary {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+  }
+
+  .rating-box {
+    flex: 0 0 auto;
+    text-align: center;
+    min-width: 120px;
+  }
+
+  .rating-score {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent-orange);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stars {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+
+  .star {
+    color: #ddd;
+    font-size: 20px;
+  }
+
+  .star.filled {
+    color: var(--accent-orange);
+  }
+
+  .rating-count {
+    font-size: 0.875rem;
+    color: var(--text-soft);
+    margin: 0;
+  }
+
+  .rating-bar {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .bar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .bar-label {
+    width: 32px;
+    text-align: right;
+    font-size: 0.875rem;
+  }
+
+  .bar {
+    flex: 1;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--accent-orange);
+  }
+
+  .bar-count {
+    width: 32px;
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--text-soft);
+  }
+
+  .reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .review-item {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .review-author {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .review-author strong {
+    font-size: 0.95rem;
+  }
+
+  .review-date {
+    font-size: 0.8rem;
+    color: var(--text-soft);
+  }
+
+  .review-title {
+    margin: 8px 0 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .review-content {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .notice--info {
+    background: #f0f4ff;
+    border-color: #dde5ff;
+  }
+
+  .notice--info .notice__title {
+    color: #4a5cc4;
+  }
+
+  @media (max-width: 640px) {
+    .rating-summary {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+</style>
