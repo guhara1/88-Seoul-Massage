@@ -95,11 +95,21 @@ const schema = [
       </div>
 
       <h2 style="font-size:1.25rem">{s.regionName} 주요 지역</h2>
-      <div class="chip-list" style="margin-bottom:28px">
+      <div class="grid grid--3" style="margin-bottom:28px">
         {
           gus.map((g) => (
-            <a class="chip" href={`/area/${s.regionSlug}/${g.regionSlug}/`}>
-              {g.regionName}
+            <a class="card" href={`/area/${s.regionSlug}/${g.regionSlug}/`}>
+              <div class="card__title">
+                {g.regionName} <span class="arrow">→</span>
+              </div>
+              <p class="card__desc">{g.contentFocus}</p>
+              {g.nearbyStations?.length > 0 && (
+                <div class="card__tags">
+                  {g.nearbyStations.slice(0, 3).map((st) => (
+                    <span class="tag">{st}</span>
+                  ))}
+                </div>
+              )}
             </a>
           ))
         }
