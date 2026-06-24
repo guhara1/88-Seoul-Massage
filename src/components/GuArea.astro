@@ -4,6 +4,7 @@ import Breadcrumbs from "./Breadcrumbs.astro";
 import LocalNav from "./LocalNav.astro";
 import PriceTable from "./PriceTable.astro";
 import ProgramLinks from "./ProgramLinks.astro";
+import ReviewSection from "./ReviewSection.astro";
 import { SITE, sidoName } from "../lib/site";
 import {
   getSido,
@@ -18,7 +19,9 @@ import {
   breadcrumbSchema,
   faqSchema,
   serviceAreaSchema,
+  aggregateRatingSchema,
 } from "../lib/seo";
+import { reviewsForArea, ratingForArea } from "../lib/reviews";
 
 interface Props {
   sidoSlug: string;
@@ -66,6 +69,11 @@ const faq = [
   },
 ];
 
+// 시드 셔플 후기 (시→구→동 구조의 구 페이지)
+const guSeed = `${citySlug}/${guSlug}`;
+const guReviews = reviewsForArea(sidoSlug, guSeed, 6);
+const rating = ratingForArea(sidoSlug, guSeed, guReviews);
+
 const schema = [
   breadcrumbSchema([
     { name: "홈", path: "/" },
@@ -76,7 +84,10 @@ const schema = [
   ]),
   serviceAreaSchema(`${city.regionName} ${gu.regionName} 출장마사지·홈타이`, path),
   faqSchema(faq),
-];
+  ...(guReviews.length > 0
+    ? [aggregateRatingSchema(gu.regionName, guReviews, rating.avg)]
+    : []),
+].filter(Boolean);
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>
@@ -209,4 +220,8 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {guReviews.length > 0 && (
+    <ReviewSection areaName={gu.regionName} reviews={guReviews} displayRating={rating.avg} />
+  )}
 </BaseLayout>

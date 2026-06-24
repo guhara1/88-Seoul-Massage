@@ -4,6 +4,7 @@ import Breadcrumbs from "./Breadcrumbs.astro";
 import LocalNav from "./LocalNav.astro";
 import PriceTable from "./PriceTable.astro";
 import ProgramLinks from "./ProgramLinks.astro";
+import ReviewSection from "./ReviewSection.astro";
 import { SITE, sidoName } from "../lib/site";
 import {
   getSido,
@@ -18,7 +19,9 @@ import {
   breadcrumbSchema,
   faqSchema,
   serviceAreaSchema,
+  aggregateRatingSchema,
 } from "../lib/seo";
+import { reviewsForArea, ratingForArea } from "../lib/reviews";
 
 interface Props {
   entry: DetailDongEntry;
@@ -82,11 +85,19 @@ const crumbs = [
   { name: dong.name, path },
 ];
 
+// 시드 셔플 후기 — 각 동 페이지마다 다른 6개 노출 (도어웨이 신호 완화)
+const dongSeed = `${guSlug}/${dong.slug}`;
+const dongReviews = reviewsForArea(sidoSlug, dongSeed, 6);
+const rating = ratingForArea(sidoSlug, dongSeed, dongReviews);
+
 const schema = [
   breadcrumbSchema(crumbs),
   serviceAreaSchema(`${dong.name} 출장마사지·홈타이`, path),
   faqSchema(faq),
-];
+  ...(dongReviews.length > 0
+    ? [aggregateRatingSchema(dong.name, dongReviews, rating.avg)]
+    : []),
+].filter(Boolean);
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>
@@ -250,4 +261,8 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {dongReviews.length > 0 && (
+    <ReviewSection areaName={dong.name} reviews={dongReviews} displayRating={rating.avg} />
+  )}
 </BaseLayout>
