@@ -218,8 +218,11 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description='Google Indexing API URL submission tool')
-    parser.add_argument('--credentials', required=True, help='Path to Google Cloud service account JSON')
-    parser.add_argument('--sitemap', help='Sitemap URL to extract URLs from')
+    parser.add_argument('--credentials', default='credentials/google-indexing-sa.json',
+                        help='Path to Google Cloud service account JSON')
+    parser.add_argument('--sitemap',
+                        default='https://patriciarepiciphysicaltherapy.com/sitemap.xml',
+                        help='Sitemap URL to extract URLs from')
     parser.add_argument('--urls', nargs='+', help='URLs to submit')
     parser.add_argument('--operation', default='URL_UPDATED', choices=['URL_UPDATED', 'URL_DELETED'],
                        help='Operation type')
@@ -233,16 +236,13 @@ def main():
         logger.error(str(e))
         sys.exit(1)
 
-    # Get URLs
+    # Get URLs — 개별 URL 지정이 우선, 없으면 사이트맵 전체
     urls = []
-    if args.sitemap:
-        logger.info(f"Extracting URLs from sitemap: {args.sitemap}")
-        urls = extract_urls_from_sitemap(args.sitemap)
-    elif args.urls:
+    if args.urls:
         urls = args.urls
     else:
-        logger.error("Please provide --sitemap or --urls")
-        sys.exit(1)
+        logger.info(f"Extracting URLs from sitemap: {args.sitemap}")
+        urls = extract_urls_from_sitemap(args.sitemap)
 
     if not urls:
         logger.error("No URLs found to submit")

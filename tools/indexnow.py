@@ -12,6 +12,13 @@ from pathlib import Path
 from typing import List, Optional
 import logging
 
+# ── 사이트 기본값 (무인자 실행 지원) ───────────────────────────────
+# `python tools/indexnow.py` 만 실행하면 아래 도메인의 전체 사이트맵을
+# 빙·네이버·얀덱스에 일괄 통보한다.
+DEFAULT_DOMAIN = "patriciarepiciphysicaltherapy.com"
+DEFAULT_KEY = "7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b"
+DEFAULT_SITEMAP = f"https://{DEFAULT_DOMAIN}/sitemap.xml"
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -41,7 +48,7 @@ class IndexNowClient:
         payload = {
             "host": self.domain,
             "key": self.indexnow_key,
-            "keyLocation": key_location or f"https://{self.domain}/indexnow-key.txt",
+            "keyLocation": key_location or f"https://{self.domain}/{self.indexnow_key}.txt",
             "urlList": urls[:10000]  # IndexNow limits to 10k per request
         }
 
@@ -178,8 +185,12 @@ def main():
     # Load config
     config = load_config(args.config)
 
-    domain = args.domain or config.get('INDEXNOW_DOMAIN', '').replace('https://', '').replace('http://', '')
-    key = args.key or config.get('INDEXNOW_KEY', '')
+    domain = (
+        args.domain
+        or config.get('INDEXNOW_DOMAIN', '')
+        or DEFAULT_DOMAIN
+    ).replace('https://', '').replace('http://', '').rstrip('/')
+    key = args.key or config.get('INDEXNOW_KEY', '') or DEFAULT_KEY
 
     if not domain or not key:
         logger.error("Domain and IndexNow key are required.")
@@ -188,16 +199,14 @@ def main():
 
     client = IndexNowClient(domain, key)
 
-    # Get URLs
+    # Get URLs — 인자 없으면 기본 사이트맵 전체를 통보
     urls = []
-    if args.sitemap:
-        logger.info(f"Extracting URLs from sitemap: {args.sitemap}")
-        urls = extract_urls_from_sitemap(args.sitemap, domain)
-    elif args.urls:
+    if args.urls:
         urls = args.urls
     else:
-        logger.error("Please provide --sitemap or --urls")
-        sys.exit(1)
+        sitemap = args.sitemap or DEFAULT_SITEMAP
+        logger.info(f"Extracting URLs from sitemap: {sitemap}")
+        urls = extract_urls_from_sitemap(sitemap, domain)
 
     if not urls:
         logger.error("No URLs found to submit")

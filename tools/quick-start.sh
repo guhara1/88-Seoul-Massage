@@ -51,8 +51,8 @@ echo -e "${GREEN}✓ 디렉토리 생성 완료${NC}"
 # 5. IndexNow 키 파일 확인
 echo ""
 echo "🔑 IndexNow 키 파일 확인..."
-if [ -f public/indexnow-key.txt ]; then
-    KEY=$(cat public/indexnow-key.txt)
+if [ -f public/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt ]; then
+    KEY=$(cat public/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt)
     echo -e "${GREEN}✓ IndexNow 키: $KEY${NC}"
 else
     echo -e "${RED}❌ IndexNow 키 파일이 없습니다${NC}"
@@ -62,7 +62,7 @@ fi
 # 6. Sitemap 확인
 echo ""
 echo "🗺️  Sitemap 확인..."
-SITEMAP_URL="https://www.vip-massage.co.kr/sitemap-index.xml"
+SITEMAP_URL="https://patriciarepiciphysicaltherapy.com/sitemap.xml"
 if curl -s -o /dev/null -w "%{http_code}" "$SITEMAP_URL" | grep -q "200"; then
     echo -e "${GREEN}✓ Sitemap 접근 가능${NC}"
 else

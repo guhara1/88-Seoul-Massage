@@ -17,4 +17,4 @@ Allow: /
 Sitemap: https://patriciarepiciphysicaltherapy.com/sitemap.xml
 
 # IndexNow key: 7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b
-# https://patriciarepiciphysicaltherapy.com/indexnow-key.txt
+# https://patriciarepiciphysicaltherapy.com/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt

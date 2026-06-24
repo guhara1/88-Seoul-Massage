@@ -1,277 +1,103 @@
-# 🔍 SEO 인덱싱 자동화 도구
+# 색인 자동화 (IndexNow + 구글 Indexing API)
 
-KC Women's Health 웹사이트의 SEO 자동화를 위한 도구 모음입니다.
+빙·네이버·얀덱스(IndexNow)와 구글(Indexing API)에 URL을 **즉시 색인 통보**하는 도구입니다.
 
-## 📚 도구 목록
+- 사이트 도메인: `patriciarepiciphysicaltherapy.com`
+- IndexNow 키: `7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b`
+- 키 파일(배포됨): `https://patriciarepiciphysicaltherapy.com/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt`
 
-### 1. **IndexNow (Bing & Naver)**
-- 파일: `indexnow.py`
-- 목적: URL을 Bing과 Naver에 즉시 제출
-- 특징:
-  - Sitemap에서 자동 URL 추출
-  - 대량 URL 배치 처리 (최대 10,000개/요청)
-  - 제출 결과 로깅
-
-### 2. **Google Indexing API**
-- 파일: `google_indexing_api.py`
-- 목적: URL을 Google에 즉시 제출
-- 특징:
-  - 서비스 계정 인증
-  - 배치 처리 및 레이트 제한
-  - 상세 결과 리포팅
-
-### 3. **빠른 시작 스크립트**
-- 파일: `quick-start.sh`
-- 목적: 환경 설정 자동화
-- 사용: `bash quick-start.sh`
+> ⚠️ **선행 조건**: 키 파일이 배포되어 실제 URL에서 200으로 열려야 IndexNow가 작동합니다.
+> 도메인 연결(Cloudflare Pages Custom domain) 완료 후 사용하세요.
 
 ---
 
-## 🚀 빠른 시작
-
-### 1단계: 의존성 설치
+## 0. 설치
 
 ```bash
-bash tools/quick-start.sh
+pip install requests google-auth   # google-auth는 구글 API에만 필요
 ```
 
-### 2단계: IndexNow 키 등록
+## 1. IndexNow — 빙 · 네이버 · 얀덱스 (구글 미참여)
+
+### 전체 사이트 일괄 통보 (첫 통보 / 대량 갱신)
+```bash
+python tools/indexnow.py
+```
+인자 없이 실행하면 `patriciarepiciphysicaltherapy.com`의 `sitemap.xml` 전체 URL을
+빙·네이버·얀덱스에 한 번에 통보합니다. (사이트맵이 실제 URL에서 열려야 함)
+
+### 글 1개만 즉시 통보 (글 올릴 때마다)
+```bash
+python tools/indexnow.py --urls https://patriciarepiciphysicaltherapy.com/area/seoul/gangnam-gu/
+```
+여러 개도 가능:
+```bash
+python tools/indexnow.py --urls \
+  https://patriciarepiciphysicaltherapy.com/area/busan/ \
+  https://patriciarepiciphysicaltherapy.com/area/busan/haeundae-gu/
+```
+
+## 2. 구글 Indexing API (구글 즉시 색인)
+
+구글은 IndexNow에 참여하지 않으므로 별도 API를 씁니다.
+
+**준비 (1회):**
+1. Google Cloud Console에서 프로젝트 생성 → **Indexing API** 사용 설정
+2. 서비스 계정 생성 → JSON 키 다운로드 → `credentials/google-indexing-sa.json`에 저장
+3. **Search Console**에서 해당 사이트 속성에 서비스 계정 이메일을 **소유자**로 추가
 
 ```bash
-# https://www.bing.com/webmasters/에서 키 받기
-# public/indexnow-key.txt 수정
-echo "your-indexnow-key" > public/indexnow-key.txt
+# 전체 사이트맵 통보 (credentials/google-indexing-sa.json 기본 사용)
+python tools/google_indexing_api.py
+
+# 글 1개
+python tools/google_indexing_api.py --urls https://patriciarepiciphysicaltherapy.com/area/seoul/
 ```
+> 구글 Indexing API는 공식적으로 JobPosting·BroadcastEvent용이며 일반 페이지는
+> 일일 200 URL 쿼터가 있습니다. 일반 페이지의 가장 확실한 방법은 **Search Console에
+> sitemap 제출**입니다(아래 3번).
 
-### 3단계: 환경 설정
+## 3. 사이트맵 제출 (가장 기본 · 필수)
 
-```bash
-cp .env.local.example .env.local
-# .env.local 파일 수정 (IndexNow 키, Google 자격증명 경로 등)
-```
+- **구글**: [Search Console](https://search.google.com/search-console) → 사이트맵 →
+  `sitemap.xml` 제출
+- **네이버**: [서치어드바이저](https://searchadvisor.naver.com) → 메인 메타
+  (`naver-site-verification` = `df1493fcf20f4e772c3000d81e5ce0267bd2c5c2`)로 소유확인 후 사이트맵 제출
+- **빙**: [Bing Webmaster](https://www.bing.com/webmasters) → 사이트맵 제출 (IndexNow 자동 연동)
 
-### 4단계: 사이트 빌드 (처음만)
-
-```bash
-npm run build
-```
-
-### 5단계: 첫 URL 제출
-
-**IndexNow (Bing & Naver):**
-```bash
-python tools/indexnow.py \
-  --domain www.vip-massage.co.kr \
-  --key YOUR_INDEXNOW_KEY \
-  --sitemap https://www.vip-massage.co.kr/sitemap-index.xml
-```
-
-**Google Indexing API:**
-```bash
-# 자격증명 파일이 준비되어 있어야 함
-python tools/google_indexing_api.py \
-  --credentials credentials/google-indexing-sa.json \
-  --sitemap https://www.vip-massage.co.kr/sitemap-index.xml
-```
+> 참고: 구글의 `ping?sitemap=` 엔드포인트는 2023년 6월 **폐지**되어 더 이상
+> 동작하지 않습니다. 사이트맵은 Search Console로 제출하세요.
 
 ---
 
-## 📖 상세 가이드
+## 4. 매 배포 시 자동 통보 (선택)
 
-전체 설정 및 사용 방법은 `SEO_SETUP_GUIDE.md`를 참고하세요.
-
-```bash
-cat tools/SEO_SETUP_GUIDE.md
-```
-
----
-
-## 🔧 명령어 참고
-
-### IndexNow 제출
+배포(빌드 후) 때마다 자동으로 IndexNow에 알리려면 CI에 한 줄 추가:
 
 ```bash
-# 환경 변수로 제출
-python tools/indexnow.py --config .env.local --sitemap SITEMAP_URL
-
-# 직접 지정
-python tools/indexnow.py \
-  --domain www.vip-massage.co.kr \
-  --key YOUR_KEY \
-  --sitemap https://www.vip-massage.co.kr/sitemap-index.xml
-
-# 특정 URL 제출
-python tools/indexnow.py \
-  --domain www.vip-massage.co.kr \
-  --key YOUR_KEY \
-  --urls https://example.com/page1 https://example.com/page2
+npm run build && python tools/indexnow.py
 ```
 
-### Google Indexing API 제출
-
-```bash
-# 기본 제출 (URL_UPDATED)
-python tools/google_indexing_api.py \
-  --credentials credentials/google-indexing-sa.json \
-  --sitemap SITEMAP_URL
-
-# URL 삭제 표시
-python tools/google_indexing_api.py \
-  --credentials credentials/google-indexing-sa.json \
-  --sitemap SITEMAP_URL \
-  --operation URL_DELETED
-
-# 특정 URL만 제출
-python tools/google_indexing_api.py \
-  --credentials credentials/google-indexing-sa.json \
-  --urls https://example.com/page1 https://example.com/page2
+또는 cron으로 매일 1회:
+```cron
+# 매일 새벽 3시 전체 사이트맵 IndexNow 통보
+0 3 * * * cd /path/to/repo && python tools/indexnow.py >> logs/indexnow.log 2>&1
 ```
 
----
-
-## 🤖 자동화 설정
-
-### GitHub Actions (권장)
-
-`.github/workflows/seo-indexing.yml`이 자동으로 실행됩니다:
-
-**설정 방법:**
-1. GitHub Secrets 추가:
-   - `INDEXNOW_KEY`: IndexNow 키
-   - `GOOGLE_INDEXING_CREDENTIALS`: Google 서비스 계정 JSON (base64 인코딩)
-
-2. 자동 실행 시점:
-   - 메인 브랜치에 페이지/데이터 수정 시
-   - 매일 자정 UTC (한국 시간 오전 9시)
-   - 매주 월요일 오전 9시 UTC
-
-### 로컬 Cron (Linux/Mac)
-
-```bash
-# crontab -e 실행 후 추가
-
-# 매일 자정에 IndexNow 실행
-0 0 * * * cd /path/to/kcwomenshealth && python tools/indexnow.py --config .env.local --sitemap https://www.vip-massage.co.kr/sitemap-index.xml >> logs/indexnow.log 2>&1
-
-# 매일 오전 1시에 Google Indexing API 실행
-0 1 * * * cd /path/to/kcwomenshealth && python tools/google_indexing_api.py --credentials credentials/google-indexing-sa.json --sitemap https://www.vip-massage.co.kr/sitemap-index.xml >> logs/google-indexing.log 2>&1
-```
-
----
-
-## 📊 결과 확인
-
-### 제출 결과 파일
-
-- `indexnow-results.json`: IndexNow 제출 결과
-- `google-indexing-results.json`: Google Indexing API 제출 결과
-
-### 결과 보기
-
-```bash
-# IndexNow 결과 확인
-cat indexnow-results.json | jq .
-
-# Google Indexing API 결과 확인
-cat google-indexing-results.json | jq .
-```
-
-### 검색 엔진 대시보드
-
-- **Bing Webmaster Tools**: https://www.bing.com/webmasters/
-  - Coverage 탭에서 URL 제출 현황 확인
-
-- **Naver Search Advisor**: https://searchadvisor.naver.com/
-  - 크롤링 → 수집 현황 확인
-
-- **Google Search Console**: https://search.google.com/search-console/
-  - Coverage 탭에서 색인 현황 확인
-
----
-
-## ⚙️ 환경 변수
-
-`.env.local`에서 설정:
-
-```env
-# IndexNow 설정
-INDEXNOW_DOMAIN=www.vip-massage.co.kr
-INDEXNOW_KEY=your-key-here
-
-# Google 설정
-GOOGLE_INDEXING_CREDENTIALS=./credentials/google-indexing-sa.json
-
-# Sitemap URL
-SITEMAP_URL=https://www.vip-massage.co.kr/sitemap-index.xml
-```
-
----
-
-## 🐛 문제 해결
-
-### IndexNow 실패 (401/403)
-
-```bash
-# 1. 키 파일 확인
-cat public/indexnow-key.txt
-
-# 2. 키 파일이 접근 가능한지 확인
-curl https://www.vip-massage.co.kr/indexnow-key.txt
-
-# 3. 도메인 확인 (www 포함/미포함 일관성)
-# .env.local에서 INDEXNOW_DOMAIN 확인
-```
-
-### Google Indexing API 실패
-
-```bash
-# 1. 자격증명 파일 확인
-ls -la credentials/google-indexing-sa.json
-
-# 2. Google Search Console에서 서비스 계정 확인
-# Settings > Users and permissions > 서비스 계정 이메일 확인
-
-# 3. Indexing API 활성화 확인
-# Google Cloud Console > APIs & Services > Indexing API
-```
-
-### Sitemap 문제
-
-```bash
-# 1. 빌드 확인
-npm run build
-
-# 2. Sitemap 생성 확인
-curl https://www.vip-massage.co.kr/sitemap-index.xml
-```
-
----
-
-## 📞 지원
-
-문제가 발생하면 `SEO_SETUP_GUIDE.md`의 "문제 해결" 섹션을 확인하세요.
-
----
-
-## 📄 파일 구조
+## 설정 파일 `.env.local` (로컬 전용 · git 제외)
 
 ```
-tools/
-├── indexnow.py                 # IndexNow API 클라이언트
-├── google_indexing_api.py      # Google Indexing API 클라이언트
-├── quick-start.sh              # 빠른 시작 스크립트
-├── README.md                   # 이 파일
-└── SEO_SETUP_GUIDE.md          # 상세 설정 가이드
-
-credentials/                    # Google 자격증명 디렉토리
-└── .gitkeep
-
-.env.local.example              # 환경 변수 템플릿
-
-.github/workflows/
-└── seo-indexing.yml            # GitHub Actions 워크플로우
+INDEXNOW_DOMAIN=patriciarepiciphysicaltherapy.com
+INDEXNOW_KEY=7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b
+SITEMAP_URL=https://patriciarepiciphysicaltherapy.com/sitemap.xml
+GOOGLE_CREDENTIALS=credentials/google-indexing-sa.json
 ```
 
----
+## 파일
 
-**마지막 업데이트**: 2026-06-24
+| 파일 | 용도 |
+|---|---|
+| `indexnow.py` | 빙·네이버·얀덱스 즉시 통보 (무인자 실행 지원) |
+| `google_indexing_api.py` | 구글 Indexing API 통보 (서비스 계정 필요) |
+| `../public/7a8d3c91-...txt` | IndexNow 키 검증 파일 (배포됨) |
+| `../.env.local` | 도메인·키 설정 (로컬 전용) |
