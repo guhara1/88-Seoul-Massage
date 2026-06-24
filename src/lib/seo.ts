@@ -118,3 +118,31 @@ export function serviceAreaSchema(areaName: string, path: string) {
     url: absoluteUrl(path),
   };
 }
+
+interface ReviewItem {
+  rating: number;
+  author: string;
+  date: string;
+  title: string;
+  content: string;
+}
+
+/** 고객 후기 및 평점 스키마 */
+export function aggregateRatingSchema(
+  areaName: string,
+  reviews: ReviewItem[]
+) {
+  if (reviews.length === 0) return null;
+
+  const avgRating =
+    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    ratingValue: parseFloat(avgRating.toFixed(1)),
+    ratingCount: reviews.length,
+    bestRating: 5,
+    worstRating: 1,
+  };
+}

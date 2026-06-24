@@ -4,6 +4,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import LocalNav from "../../../components/LocalNav.astro";
 import PriceTable from "../../../components/PriceTable.astro";
 import ProgramLinks from "../../../components/ProgramLinks.astro";
+import ReviewSection from "../../../components/ReviewSection.astro";
 import { SITE } from "../../../lib/site";
 import {
   sidos,
@@ -15,7 +16,9 @@ import {
   breadcrumbSchema,
   faqSchema,
   serviceAreaSchema,
+  aggregateRatingSchema,
 } from "../../../lib/seo";
+import reviews from "../../../data/reviews.json";
 
 export function getStaticPaths() {
   return sidos.map((s) => ({ params: { sido: s.regionSlug }, props: { s } }));
@@ -63,6 +66,11 @@ const faq = [
   },
 ];
 
+// 현재 시도의 후기 필터링
+const regionReviews = reviews.filter(
+  (r) => r.parentSlug === s.regionSlug
+);
+
 const schema = [
   breadcrumbSchema([
     { name: "홈", path: "/" },
@@ -71,7 +79,10 @@ const schema = [
   ]),
   serviceAreaSchema(`${s.sido} 출장마사지·홈타이`, path),
   faqSchema(faq),
-];
+  ...(regionReviews.length > 0
+    ? [aggregateRatingSchema(s.regionName, regionReviews)]
+    : []),
+].filter(Boolean);
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>
@@ -237,6 +248,8 @@ const schema = [
       />
     </div>
   </section>
+
+  {regionReviews.length > 0 && <ReviewSection areaName={s.regionName} reviews={regionReviews} />}
 
   <section class="section">
     <div class="container container--narrow">

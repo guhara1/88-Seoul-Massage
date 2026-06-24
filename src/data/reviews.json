@@ -1,0 +1,242 @@
+[
+  {
+    "id": "seoul_001",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "김민준",
+    "rating": 5,
+    "date": "2024-11-15",
+    "title": "강남역 근처에서 최고의 서비스",
+    "content": "강남역 근처에서 출장마사지를 받았는데, 예약부터 방문까지 정말 친절하게 안내해주셨습니다. 숙련된 관리사분의 손길이 정말 전문적이었고, 몸과 마음이 편해지는 것을 느낄 수 있었습니다."
+  },
+  {
+    "id": "seoul_002",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "이수현",
+    "rating": 5,
+    "date": "2024-11-10",
+    "title": "회사 스트레스를 완벽하게 해소",
+    "content": "강남역 주변 오피스에서 일하고 있는데, 퇴근 후 바로 예약해서 받을 수 있어서 정말 편합니다. 1시간 코스를 받았는데, 정말 피로가 확 풀렸습니다. 앞으로도 정기적으로 이용할 예정입니다."
+  },
+  {
+    "id": "seoul_003",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "박준호",
+    "rating": 4,
+    "date": "2024-11-05",
+    "title": "합리적인 가격에 좋은 서비스",
+    "content": "예상했던 것보다 훨씬 깨끗하고 전문적인 환경에서 마사지를 받을 수 있었습니다. 관리사님의 숙련도가 뛰어나고, 가격도 합리적이었습니다."
+  },
+  {
+    "id": "seoul_004",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "정지은",
+    "rating": 5,
+    "date": "2024-10-28",
+    "title": "호텔 객실에서 편하게 받은 마사지",
+    "content": "호텔에서 숙박할 때 객실 마사지를 예약했습니다. 호텔 규정도 잘 알고 있으시고, 시간 약속도 정확하게 지켜주셨습니다. 여행 중 피로를 완벽하게 풀 수 있었습니다."
+  },
+  {
+    "id": "seoul_005",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "최영미",
+    "rating": 4,
+    "date": "2024-10-20",
+    "title": "여자 관리사 선택 가능해서 좋습니다",
+    "content": "개인적인 선호도에 맞게 여자 관리사를 선택할 수 있어서 정말 좋았습니다. 전화 예약 시 다양한 옵션을 설명해주셔서 만족스러웠습니다."
+  },
+  {
+    "id": "seoul_006",
+    "parentSlug": "seoul",
+    "regionSlug": "gangnam-gu",
+    "author": "손찬호",
+    "rating": 5,
+    "date": "2024-10-15",
+    "title": "잠실역 근처 최고의 선택",
+    "content": "빅데이터 분석 업무로 목과 어깨가 뻐근했는데, 90분 코스를 받으니 정말 효과적이었습니다. 전문 관리사분의 서비스 수준이 정말 높습니다."
+  },
+  {
+    "id": "seoul_007",
+    "parentSlug": "seoul",
+    "regionSlug": "jongno-gu",
+    "author": "한민정",
+    "rating": 5,
+    "date": "2024-11-12",
+    "title": "서울역 근처에서 최고의 선택",
+    "content": "출장으로 서울역 주변에 머물렀는데, 호텔에서 쉽게 예약할 수 있었고 서비스 수준이 정말 좋았습니다. 숙련된 관리사분의 손길이 정말 전문적입니다."
+  },
+  {
+    "id": "seoul_008",
+    "parentSlug": "seoul",
+    "regionSlug": "jongno-gu",
+    "author": "유준석",
+    "rating": 4,
+    "date": "2024-11-01",
+    "title": "종로3가 근처 강력 추천",
+    "content": "저렴한 가격대에 비해 정말 높은 수준의 서비스를 받았습니다. 전화 예약도 간편하고, 스태프분들의 친절도가 정말 좋습니다."
+  },
+  {
+    "id": "gyeonggi_001",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "suwon-si",
+    "author": "이재민",
+    "rating": 5,
+    "date": "2024-11-14",
+    "title": "수원에서 찾은 최고의 마사지",
+    "content": "수원역 근처에 있어서 접근성이 정말 좋습니다. 처음 이용했지만, 예약부터 서비스까지 정말 만족스러웠습니다. 정기적으로 이용할 계획입니다."
+  },
+  {
+    "id": "gyeonggi_002",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "suwon-si",
+    "author": "김소라",
+    "rating": 5,
+    "date": "2024-11-08",
+    "title": "출장 중 몸과 마음을 치유",
+    "content": "장시간 운전으로 피곤했는데, 120분 코스를 받으니 완전히 피로가 풀렸습니다. 관리사님의 전문성이 정말 뛰어나고, 시설도 깔끔합니다."
+  },
+  {
+    "id": "gyeonggi_003",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "songpa-gu",
+    "author": "박영수",
+    "rating": 4,
+    "date": "2024-11-02",
+    "title": "성남 판교에서의 편한 예약",
+    "content": "판교 테크노밸리 근처에 사무실이 있어서 자주 이용합니다. 업무 스트레스를 효과적으로 풀 수 있는 최고의 선택입니다."
+  },
+  {
+    "id": "gyeonggi_004",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "songpa-gu",
+    "author": "정은희",
+    "rating": 5,
+    "date": "2024-10-25",
+    "title": "성남에서 가장 신뢰할 수 있는 업체",
+    "content": "개인정보 보호와 서비스 질에 있어서 정말 신뢰할 수 있습니다. 여러 번 이용했지만 항상 일정한 수준의 서비스를 제공합니다."
+  },
+  {
+    "id": "gyeonggi_005",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "goyang-si",
+    "author": "이성희",
+    "rating": 5,
+    "date": "2024-10-18",
+    "title": "고양 일산에서의 최고의 휴식",
+    "content": "일산 신도시의 오피스텔에서 쉽게 예약할 수 있었습니다. 관리사님의 손길이 정말 부드럽고 전문적이어서, 깊은 이완을 경험했습니다."
+  },
+  {
+    "id": "gyeonggi_006",
+    "parentSlug": "gyeonggi",
+    "regionSlug": "goyang-si",
+    "author": "최준영",
+    "rating": 4,
+    "date": "2024-10-10",
+    "title": "고양에서 정기적으로 이용 중",
+    "content": "주말에 자주 이용하는데, 예약도 쉽고 서비스 질이 일정합니다. 가족과 함께 추천할 만한 서비스입니다."
+  },
+  {
+    "id": "busan_001",
+    "parentSlug": "busan",
+    "regionSlug": "haeundae-gu",
+    "author": "강현철",
+    "rating": 5,
+    "date": "2024-11-13",
+    "title": "해운대 해수욕장 근처에서의 최고의 선택",
+    "content": "해운대 센텀시티 근처에서 머물렀는데, 바다 휴가의 피로를 완벽하게 풀 수 있었습니다. 시설이 정말 깔끔하고 관리사님의 서비스 수준이 높습니다."
+  },
+  {
+    "id": "busan_002",
+    "parentSlug": "busan",
+    "regionSlug": "haeundae-gu",
+    "author": "정혜인",
+    "rating": 5,
+    "date": "2024-11-06",
+    "title": "부산 여행의 최고의 마무리",
+    "content": "부산 여행 마지막 날 마사지를 받았습니다. 관광으로 피로한 몸과 마음을 완벽하게 이완시켜주었습니다. 정말 감사합니다."
+  },
+  {
+    "id": "busan_003",
+    "parentSlug": "busan",
+    "regionSlug": "haeundae-gu",
+    "author": "이종현",
+    "rating": 4,
+    "date": "2024-10-29",
+    "title": "센텀시티 근처 정기 이용처",
+    "content": "센텀시티에 근무하는데, 점심시간이나 퇴근 후 자주 이용합니다. 빠른 예약 처리와 합리적인 가격이 정말 좋습니다."
+  },
+  {
+    "id": "busan_004",
+    "parentSlug": "busan",
+    "regionSlug": "seo-gu",
+    "author": "박미영",
+    "rating": 5,
+    "date": "2024-10-22",
+    "title": "서면에서의 완벽한 휴식",
+    "content": "서면의 여러 상점을 둘러본 후, 피로가 풀렸습니다. 친절한 예약 상담과 높은 수준의 마사지 서비스가 정말 만족스럽습니다."
+  },
+  {
+    "id": "busan_005",
+    "parentSlug": "busan",
+    "regionSlug": "seo-gu",
+    "author": "김동욱",
+    "rating": 4,
+    "date": "2024-10-12",
+    "title": "부산 비즈니스 지구에서의 최고 선택",
+    "content": "서면 비즈니스 구역에서 일하는데, 회의 후 스트레스를 효과적으로 풀 수 있습니다. 정기적으로 이용하고 있습니다."
+  },
+  {
+    "id": "incheon_001",
+    "parentSlug": "incheon",
+    "regionSlug": "yeonsu-gu",
+    "author": "최민석",
+    "rating": 5,
+    "date": "2024-11-11",
+    "title": "인천 송도에서 최고의 마사지",
+    "content": "송도 국제업무지구에서 근무하는데, 점심 시간에 빠르게 예약할 수 있어서 정말 편합니다. 관리사님의 손길이 정말 전문적입니다."
+  },
+  {
+    "id": "incheon_002",
+    "parentSlug": "incheon",
+    "regionSlug": "yeonsu-gu",
+    "author": "이지은",
+    "rating": 5,
+    "date": "2024-11-03",
+    "title": "인천 공항 근처에서의 피로 회복",
+    "content": "출장을 자주 다니는데, 인천 공항 인근에서 효과적으로 피로를 풀 수 있어서 정말 좋습니다. 여러 번 이용했습니다."
+  },
+  {
+    "id": "incheon_003",
+    "parentSlug": "incheon",
+    "regionSlug": "bupyeong-gu",
+    "author": "한주호",
+    "rating": 4,
+    "date": "2024-10-24",
+    "title": "부평에서 신뢰할 수 있는 선택",
+    "content": "부평 지역에서 가장 신뢰할 수 있는 마사지 업체입니다. 시설이 깔끔하고 서비스 수준이 일정합니다."
+  },
+  {
+    "id": "incheon_004",
+    "parentSlug": "incheon",
+    "regionSlug": "bupyeong-gu",
+    "author": "정소영",
+    "rating": 5,
+    "date": "2024-10-16",
+    "title": "부평 호텔에서의 편한 예약",
+    "content": "호텔 머물 때 객실 마사지를 예약했습니다. 호텔 규정을 잘 알고 있고, 서비스 수준이 정말 높습니다."
+  },
+  {
+    "id": "incheon_005",
+    "parentSlug": "incheon",
+    "regionSlug": "michuhol-gu",
+    "author": "이영준",
+    "rating": 4,
+    "date": "2024-10-08",
+    "title": "인천 미추홀에서의 정기 이용처",
+    "content": "월급일마다 정기적으로 이용하는데, 일정한 수준의 서비스를 항상 제공해줍니다. 추천합니다."
+  }
+]
