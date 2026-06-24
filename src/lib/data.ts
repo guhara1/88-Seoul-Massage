@@ -3,6 +3,7 @@ import sigunguData from "../data/regions/sigungu.json";
 import stationData from "../data/stations/stations.json";
 import serviceData from "../data/services.json";
 import dongData from "../data/regions/dong.json";
+import guData from "../data/regions/gu.json";
 
 export interface Sido {
   regionName: string;
@@ -179,6 +180,82 @@ export const allDetailDongs = (): DetailDongEntry[] => {
 
 /** contentStatus 가 색인 가능한 상태인지 */
 export const isIndexable = (status: string) => status === "ready";
+
+// ─────────────────────────────────────────────────────────────
+// 행정구(시 아래 일반구) — 시 → 구 → 동 3단계 구조
+// (수원·성남·안양·안산·고양·용인 등 일반구를 둔 시에만 존재)
+// ─────────────────────────────────────────────────────────────
+export interface CityGu {
+  regionName: string;
+  regionSlug: string;
+  contentFocus: string;
+  /** 이 구에 속한 행정동 슬러그 목록 (dong.json/dong-detail 기준) */
+  dongs: string[];
+}
+const cityGuData = guData as Record<string, Record<string, CityGu[]>>;
+
+/** 해당 시(市)에 속한 행정구 목록 (없으면 빈 배열) */
+export const gusOfCity = (sidoSlug: string, citySlug: string): CityGu[] =>
+  cityGuData[sidoSlug]?.[citySlug] ?? [];
+
+/** 시(市)가 행정구를 두는지 여부 (true면 시→구→동, false면 시→동) */
+export const cityHasGu = (sidoSlug: string, citySlug: string): boolean =>
+  gusOfCity(sidoSlug, citySlug).length > 0;
+
+export const getCityGu = (
+  sidoSlug: string,
+  citySlug: string,
+  guSlug: string
+): CityGu | undefined =>
+  gusOfCity(sidoSlug, citySlug).find((g) => g.regionSlug === guSlug);
+
+/** 특정 행정구에 속한 행정동 목록 (시 전체 동에서 소속 동만 추려 정렬) */
+export const dongsOfGu = (
+  sidoSlug: string,
+  citySlug: string,
+  guSlug: string
+): Dong[] => {
+  const gu = getCityGu(sidoSlug, citySlug, guSlug);
+  if (!gu) return [];
+  const all = dongsOf(sidoSlug, citySlug);
+  const bySlug = new Map(all.map((d) => [d.slug, d]));
+  return gu.dongs
+    .map(
+      (slug) =>
+        bySlug.get(slug) ?? ({ name: slug, slug, blurb: "" } as Dong)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+};
+
+/** 어떤 행정동이 속한 행정구 (브레드크럼·내부링크용) */
+export const guOfDong = (
+  sidoSlug: string,
+  citySlug: string,
+  dongSlug: string
+): CityGu | undefined =>
+  gusOfCity(sidoSlug, citySlug).find((g) => g.dongs.includes(dongSlug));
+
+export interface CityGuPath {
+  sidoSlug: string;
+  citySlug: string;
+  guSlug: string;
+  gu: CityGu;
+}
+
+/** 행정구 페이지 생성 대상 (부모 시가 ready 상태인 경우만 — 도어웨이 방지) */
+export const allCityGuPaths = (): CityGuPath[] => {
+  const out: CityGuPath[] = [];
+  for (const [sidoSlug, cities] of Object.entries(cityGuData)) {
+    for (const [citySlug, gus] of Object.entries(cities)) {
+      const city = sigungus.find(
+        (s) => s.parentSlug === sidoSlug && s.regionSlug === citySlug
+      );
+      if (!city || city.contentStatus !== "ready") continue;
+      for (const gu of gus) out.push({ sidoSlug, citySlug, guSlug: gu.regionSlug, gu });
+    }
+  }
+  return out;
+};
 
 export const getSido = (slug: string) =>
   sidos.find((s) => s.regionSlug === slug);

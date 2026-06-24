@@ -1,0 +1,118 @@
+{
+  "gyeonggi": {
+    "suwon": [
+      {
+        "regionName": "장안구",
+        "regionSlug": "jangan-gu",
+        "contentFocus": "수원 북부의 행정·주거 중심으로 정자동과 율전동 일대 아파트 단지가 넓게 자리한 구역입니다.",
+        "dongs": ["jeongja-dong", "yuljeon-dong", "jowon-dong"]
+      },
+      {
+        "regionName": "권선구",
+        "regionSlug": "gwonseon-gu",
+        "contentFocus": "수원 서남부의 주거·산업 혼합 지역으로 권선동과 세류동 생활권이 발달한 구역입니다.",
+        "dongs": ["gwonseon-dong", "seryu-dong", "gosaek-dong"]
+      },
+      {
+        "regionName": "팔달구",
+        "regionSlug": "paldal-gu",
+        "contentFocus": "수원 도심부로 인계동 번화가와 화성행궁·매산동 상권이 어우러진 수원의 중심 구역입니다.",
+        "dongs": ["maesan-dong", "ingye-dong", "uman-dong", "ji-dong"]
+      },
+      {
+        "regionName": "영통구",
+        "regionSlug": "yeongtong-gu",
+        "contentFocus": "광교신도시와 영통·매탄동 첨단 업무·주거단지가 집중된 수원 동부의 신도심 구역입니다.",
+        "dongs": ["yeongtong-dong", "maetan-dong", "gwanggyo-dong", "mangpo-dong"]
+      }
+    ],
+    "seongnam": [
+      {
+        "regionName": "수정구",
+        "regionSlug": "sujeong-gu",
+        "contentFocus": "성남 구도심 북부로 신흥동·태평동 주거지와 위례 생활권이 인접한 구역입니다.",
+        "dongs": ["sinheung-dong", "taepyeong-dong"]
+      },
+      {
+        "regionName": "중원구",
+        "regionSlug": "jungwon-gu",
+        "contentFocus": "성남 구도심 중부로 상대원 산업단지와 성남동 상권이 자리한 구역입니다.",
+        "dongs": ["sangdaewon-dong", "seongnam-dong"]
+      },
+      {
+        "regionName": "분당구",
+        "regionSlug": "bundang-gu",
+        "contentFocus": "판교 테크노밸리와 정자·서현·야탑 등 분당신도시 핵심 업무·주거권이 모인 구역입니다.",
+        "dongs": ["jeongja-dong", "seohyeon-dong", "yatap-dong", "sunae-dong", "imae-dong", "pangyo-dong", "sampyeong-dong", "geumgok-dong", "gumi-dong", "baekhyeon-dong"]
+      }
+    ],
+    "anyang": [
+      {
+        "regionName": "만안구",
+        "regionSlug": "manan-gu",
+        "contentFocus": "안양 구도심으로 안양동 상권과 석수·박달동 주거지가 자리한 서부 구역입니다.",
+        "dongs": ["anyang-dong", "seoksu-dong", "bakdal-dong"]
+      },
+      {
+        "regionName": "동안구",
+        "regionSlug": "dongan-gu",
+        "contentFocus": "평촌신도시 중심으로 범계·평촌 상업지구와 호계·관양동 주거권이 발달한 구역입니다.",
+        "dongs": ["beomgye-dong", "pyeongchon-dong", "hogye-dong", "gwanyang-dong", "bisan-dong", "burim-dong", "galsan-dong"]
+      }
+    ],
+    "ansan": [
+      {
+        "regionName": "상록구",
+        "regionSlug": "sangnok-gu",
+        "contentFocus": "안산 동부로 본오동·사동 대단지 주거지와 한양대 에리카 생활권이 자리한 구역입니다.",
+        "dongs": ["wa-dong", "bono-dong", "sa-dong"]
+      },
+      {
+        "regionName": "단원구",
+        "regionSlug": "danwon-gu",
+        "contentFocus": "안산 서부로 고잔신도시와 중앙역 상권, 원곡·선부동 생활권이 모인 구역입니다.",
+        "dongs": ["gojan-dong", "jungang-dong", "wongok-dong", "seonbu-dong", "choji-dong"]
+      }
+    ],
+    "goyang": [
+      {
+        "regionName": "덕양구",
+        "regionSlug": "deogyang-gu",
+        "contentFocus": "고양 동남부로 화정·행신동 주거지와 삼송·원흥 신규 택지가 확장되는 구역입니다.",
+        "dongs": ["hwajeong-dong", "haengsin-dong", "wondang-dong", "samsong-dong", "wonheung-dong"]
+      },
+      {
+        "regionName": "일산동구",
+        "regionSlug": "ilsandong-gu",
+        "contentFocus": "일산신도시 동부로 정발산·마두·백석동 상업·업무 중심이 자리한 구역입니다.",
+        "dongs": ["jeongbalsan-dong", "madu-dong", "baekseok-dong", "janghang-dong", "ilsan-dong"]
+      },
+      {
+        "regionName": "일산서구",
+        "regionSlug": "ilsanseo-gu",
+        "contentFocus": "일산신도시 서부로 주엽·대화동 주거지와 탄현동 생활권이 형성된 구역입니다.",
+        "dongs": ["juyeop-dong", "daehwa-dong", "tanhyeon-dong"]
+      }
+    ],
+    "yongin": [
+      {
+        "regionName": "처인구",
+        "regionSlug": "cheoin-gu",
+        "contentFocus": "용인 동부 행정 중심으로 김량장동 구도심과 역북동 생활권이 자리한 구역입니다.",
+        "dongs": ["kimnyangjang-dong", "yeokbuk-dong"]
+      },
+      {
+        "regionName": "기흥구",
+        "regionSlug": "giheung-gu",
+        "contentFocus": "용인 중부로 신갈·구갈·동백 등 대규모 아파트 단지와 업무지구가 밀집한 구역입니다.",
+        "dongs": ["gugal-dong", "singal-dong", "dongbaek-dong", "sanggal-dong", "bojeong-dong", "guseong-dong"]
+      },
+      {
+        "regionName": "수지구",
+        "regionSlug": "suji-gu",
+        "contentFocus": "용인 서북부로 죽전·풍덕천·성복동 등 분당 인접 주거 선호권이 모인 구역입니다.",
+        "dongs": ["jukjeon-dong", "dongcheon-dong", "sanghyeon-dong", "pungdeokcheon-dong", "seongbok-dong"]
+      }
+    ]
+  }
+}

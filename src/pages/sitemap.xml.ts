@@ -6,6 +6,7 @@ import {
   lifeAreas,
   programs,
   allDetailDongs,
+  allCityGuPaths,
 } from "../lib/data";
 import { SITE } from "../lib/site";
 
@@ -53,6 +54,10 @@ export async function GET() {
   sidos.forEach((s) => add(`/area/${s.regionSlug}/`));
   // 구/시/군 (생성되는 전체)
   sigungus.forEach((g) => add(`/area/${g.parentSlug}/${g.regionSlug}/`));
+  // 행정구 (시 → 구 → 동 구조를 둔 시의 일반구)
+  allCityGuPaths().forEach((g) =>
+    add(`/area/${g.sidoSlug}/${g.citySlug}/${g.guSlug}/`)
+  );
   // 행정동 상세
   allDetailDongs().forEach((e) =>
     add(`/area/${e.sidoSlug}/${e.guSlug}/${e.dong.slug}/`)
