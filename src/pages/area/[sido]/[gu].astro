@@ -23,7 +23,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
 import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
-import { guIntro } from "../../../lib/prose";
+import { guIntro, guReserveIntro, guVisitNote, guNeighbor, guHeroSub, guLifeLead, guAreaLead, guStationLead, checklistItems } from "../../../lib/prose";
 
 export function getStaticPaths() {
   return sigungus.map((g) => ({
@@ -102,14 +102,24 @@ const faq = [
 const areaReviews = reviewsForArea(g.parentSlug, g.regionSlug, 6);
 const rating = ratingForArea(g.parentSlug, g.regionSlug, areaReviews);
 
-// 시드 기반 문장 변형 — 지역마다 도입부 문장 구조가 달라진다 (중복 본문 방지)
-const introParas = guIntro(`${g.parentSlug}/${g.regionSlug}`, {
+// 시드 기반 문장 변형 — 지역마다 본문 문단 구조가 달라진다 (중복 본문 방지)
+const gseed = `${g.parentSlug}/${g.regionSlug}`;
+const gvars = {
   region: g.regionName,
   sido: sido.regionName,
   focus: g.contentFocus,
   areas: g.nearbyAreas,
   stations: ns,
-});
+};
+const introParas = guIntro(gseed, gvars);
+const heroSub = guHeroSub(gseed, gvars);
+const guReserveIntroText = guReserveIntro(gseed, gvars);
+const guVisitNoteText = guVisitNote(gseed, gvars);
+const guNeighborText = guNeighbor(gseed, gvars);
+const checkItems = checklistItems(gseed);
+const guLifeLeadText = guLifeLead(gseed, gvars);
+const guAreaLeadText = guAreaLead(gseed, gvars);
+const guStationLeadText = guStationLead(gseed, gvars);
 
 const schema = noindex
   ? []
@@ -147,10 +157,7 @@ const schema = noindex
     <div class="container prose">
       <span class="eyebrow">{sidoName(g.parentSlug)} · {g.regionName}</span>
       <h1>{g.regionName} 출장마사지 · {g.regionName} 홈타이 지역별 예약 안내</h1>
-      <p class="hero__sub" style="color:var(--text-soft)">
-        {g.nearbyAreas.join(", ")} 등 {g.regionName} 주요 생활권별 방문 가능
-        지역과 예약 전 확인사항을 안내합니다.
-      </p>
+      <p class="hero__sub" style="color:var(--text-soft)">{heroSub}</p>
       <div class="hero__cta" style="margin-top:18px">
         <a class="btn btn--cta" href="#areas">지역별 안내 보기</a>
         <a class="btn btn--blue" href="#stations">가까운 역 찾기</a>
@@ -166,17 +173,14 @@ const schema = noindex
       <h2>{g.regionName}에서 출장마사지를 찾을 때 먼저 확인할 기준</h2>
       {introParas.map((para) => <p>{para}</p>)}
       <p>
-        방문 위치(자택·호텔·오피스텔)와 시간대, 이동 거리에 따라 예약 가능 시간과
-        추가 이동비 기준이 달라질 수 있으므로, 예약 전에 정확한 주소와 건물 출입
-        방식을 확인하는 방식을 권장합니다. {g.regionName} 출장마사지 예약은
-        <a href={SITE.phoneHref}>{SITE.phone}</a>로 전화하시면, 방문 위치와 희망
-        시간에 맞춰 가능한 동선과 추가 이동비 기준을 안내받을 수 있습니다.
+        {g.regionName} 출장마사지 예약은 <a href={SITE.phoneHref}>{SITE.phone}</a>로
+        문의해 주세요.
       </p>
     </div>
   </section>
 
   <!-- 요금표 (메인 + 모든 지역 페이지 공통) -->
-  <PriceTable areaLabel={g.regionName} />
+  <PriceTable areaLabel={g.regionName} seed={gseed} />
 
   <!-- 지역별 안내 -->
   <section class="section section-anchor" id="areas">
@@ -207,10 +211,7 @@ const schema = noindex
             <div class="section__head">
               <span class="eyebrow">지역별 안내</span>
               <h2 class="section__title">{g.regionName} 대표 지역별 방문 가능 지역 안내</h2>
-              <p class="section__lead">
-                {g.regionName}의 대표 지역(행정동)을 가나다순으로 정리했습니다. 번호
-                동은 대표 동으로 통합해 안내합니다.
-              </p>
+              <p class="section__lead">{guAreaLeadText}</p>
             </div>
             <div class="area-rows">
               {areaList.map((d) => {
@@ -244,10 +245,7 @@ const schema = noindex
       <div class="section__head">
         <span class="eyebrow">역세권 안내</span>
         <h2 class="section__title">{g.regionName} 주요 지하철역별 홈타이 안내</h2>
-        <p class="section__lead">
-          역명 기준으로 하나의 안내 페이지를 제공합니다. 환승역도 노선·출구별로
-          나누지 않습니다.
-        </p>
+        <p class="section__lead">{guStationLeadText}</p>
       </div>
       {
         guStations.length === 0 ? (
@@ -301,9 +299,7 @@ const schema = noindex
       <div class="section__head">
         <span class="eyebrow">생활권 안내</span>
         <h2 class="section__title">{g.regionName} 인근 생활권 예약 기준</h2>
-        <p class="section__lead">
-          생활권 안내는 지역 페이지와 역 페이지 사이를 연결하는 중간 허브입니다.
-        </p>
+        <p class="section__lead">{guLifeLeadText}</p>
       </div>
       <div class="chip-list">
         {
@@ -320,6 +316,7 @@ const schema = noindex
     <div class="container">
       <ProgramLinks
         limit={8}
+        seed={gseed}
         prefix={g.regionName}
         title={`${g.regionName} 마사지 프로그램 안내`}
         lead={`${g.regionName}에서 받을 수 있는 관리 종류별 안내입니다.`}
@@ -331,35 +328,12 @@ const schema = noindex
   <section class="section section--soft">
     <div class="container prose">
       <h2>{g.regionName} 홈타이 예약 전 확인사항</h2>
-      <p>
-        {g.regionName} 방문 전 아래 항목을 미리 확인하시면 예약과 방문이
-        원활합니다. 자택·호텔·오피스텔 등 방문 위치에 따라 출입 방법과 주소 확인 기준이 달라지므로, 예약 시 정확한 정보를 미리 알려주시면 대기 시간을 줄일 수 있습니다.
-      </p>
+      <p>{guReserveIntroText}</p>
       <ul>
-        <li>방문 가능 주소 확인 (자택·호텔·오피스텔 동·호수)</li>
-        <li>예약 가능 시간 확인</li>
-        <li>추가 이동비 여부 확인</li>
-        <li>건물 출입 방식(공동현관·프런트) 확인</li>
-        <li>결제 방식 확인</li>
-        <li>예약 변경 기준 확인</li>
-        <li>개인정보 처리 기준 확인</li>
-        <li>불법·선정적 서비스 불가 안내</li>
+        {checkItems.map((it) => <li>{it}</li>)}
       </ul>
 
-      <p>
-        {g.regionName}에서 자택은 상세 주소와 출입 동선을, 호텔·숙소는 객실 호수와 프런트 출입 규정을, 오피스텔은 동·호수와 공동현관 출입 방법을 미리 확인하면 방문이 매끄럽습니다. 예약 시 방문 위치와 희망 시간, 원하는 관리 종류를 함께 알려 주시면 {g.regionName} 내 가능한 동선과 추가 이동비 기준을 안내받기 쉽습니다.
-      </p>
-
-      <table class="info-table">
-        <tbody>
-          <tr><th>상호</th><td>{SITE.name}</td></tr>
-          <tr><th>전화예약</th><td><a href={SITE.phoneHref}>{SITE.phone}</a></td></tr>
-          <tr><th>운영시간</th><td>{SITE.hours}</td></tr>
-          <tr><th>안내 지역</th><td>{g.regionName} 및 인접 생활권</td></tr>
-          <tr><th>기본 요금</th><td>60분 90,000원 · 90분 150,000원 · 120분 180,000원</td></tr>
-          <tr><th>추가 이동비</th><td>지역·시간대·거리에 따라 예약 시 안내</td></tr>
-        </tbody>
-      </table>
+      <p>{guVisitNoteText}</p>
 
       <div class="notice notice--warn">
         <div class="notice__title">예약 안내</div>
@@ -370,9 +344,7 @@ const schema = noindex
       </div>
 
       <h2>인접 지역 안내</h2>
-      <p>
-        {sido.regionName} 내 인접 지역도 함께 확인해 보세요. {g.regionName}과 인접한 구·군들도 비슷한 생활권 특성을 가지고 있어, 방문 동선과 추가 이동비 기준이 유사할 수 있습니다. 인접 지역 페이지에서 각 지역의 대표 생활권과 지하철역 정보를 함께 확인하면 {sido.regionName} 전체 지역에서 효율적으로 방문 가능 범위를 파악할 수 있습니다.
-      </p>
+      <p>{guNeighborText}</p>
       <div class="chip-list">
         {
           neighbors.map((n) => (
@@ -381,14 +353,6 @@ const schema = noindex
         }
         <a class="chip" href={`/area/${g.parentSlug}/`}>{sido.regionName} 전체</a>
       </div>
-
-      <h2>{g.regionName} 페이지 중복 방지 운영 기준</h2>
-      <p>
-        {g.regionName} 안내는 구 전체 생활권을 설명하고, 역 페이지는 역 주변 생활권을 설명하도록 역할을 나눕니다. 지역명만 바꾼 본문을 만들지 않으며, 대표 행정동의 실제 생활권 차이와 인접 지역·역 연결을 중심으로 안내합니다.
-      </p>
-      <p>
-        {g.regionName}은 상권과 주거지, 오피스텔 분포에 따라 지역별로 특색이 다르므로, 각 행정동별 페이지에서는 해당 지역의 구체적인 생활권 특성과 근처 역·인접 지역을 중심으로 설명합니다. 이를 통해 예약을 원하시는 방문 위치와 희망 시간에 맞는 동선을 보다 정확하게 파악할 수 있습니다.
-      </p>
 
       <h2>{g.regionName} 자주 묻는 질문</h2>
       <div class="faq">

@@ -1,20 +1,54 @@
 ---
 import pricing from "../data/pricing.json";
 import { SITE } from "../lib/site";
+import { pick } from "../lib/prose";
 
 interface Props {
   /** 표 상단에 지역명을 붙이고 싶을 때 (예: "강남") */
   areaLabel?: string;
+  /** 페이지 시드 — 코스 설명 문구를 페이지마다 다르게 (가격·시간은 고정) */
+  seed?: string;
 }
-const { areaLabel } = Astro.props;
+const { areaLabel, seed = "" } = Astro.props;
 const heading = areaLabel ? `${areaLabel} ${pricing.heading}` : pricing.heading;
+
+// 코스 설명 변형 (요금·시간은 그대로, 마케팅 카피만 시드별로 달라짐)
+const descVariants: Record<string, string[]> = {
+  "60분 코스": [
+    "핵심 부위 위주 가벼운 이완",
+    "뭉친 곳 중심의 짧고 효율적인 케어",
+    "어깨·목 등 핵심 부위 집중 이완",
+  ],
+  "90분 코스": [
+    "전신 균형 표준 구성·아로마 포함",
+    "전신을 고르게 풀어 주는 표준 코스",
+    "아로마를 더한 전신 밸런스 구성",
+  ],
+  "120분 코스": [
+    "구석구석 집중하는 프리미엄 구성",
+    "발끝까지 꼼꼼히 다루는 프리미엄 케어",
+    "충분한 시간으로 전신을 깊게 푸는 구성",
+  ],
+};
+const subVariants = [
+  pricing.subheading,
+  "60·90·120분 코스별 기본 금액입니다. 표시 외 별도 비용은 두지 않습니다.",
+  "관리 시간 기준 기본가입니다. 숨은 비용 없이 통화 시 최종 금액을 확정합니다.",
+];
+const subheading = seed ? pick(seed, "price.sub", subVariants) : pricing.subheading;
+const noteVariants = [
+  pricing.note,
+  "최종 금액은 방문 지역·시간대·이동 거리를 반영해 통화 시 확정됩니다.",
+  "지역과 시간대, 거리 조건에 따라 통화 단계에서 최종 금액을 안내드립니다.",
+];
+const note = seed ? pick(seed, "price.note", noteVariants) : pricing.note;
 ---
 
 <section class="section section--dark price">
   <div class="container">
     <div class="price__head">
       <h2 class="price__title">{heading}</h2>
-      <p class="price__sub">{pricing.subheading}</p>
+      <p class="price__sub">{subheading}</p>
     </div>
 
     <div class="price__grid">
@@ -27,7 +61,9 @@ const heading = areaLabel ? `${areaLabel} ${pricing.heading}` : pricing.heading;
               {c.price}<small>원</small>
             </div>
             <div class="price-card__dur">{c.duration}</div>
-            <p class="price-card__desc">{c.desc}</p>
+            <p class="price-card__desc">
+              {seed && descVariants[c.name] ? pick(seed, `price.${c.name}`, descVariants[c.name]) : c.desc}
+            </p>
             <a
               class:list={["btn", c.recommended ? "btn--gold" : "btn--line", "price-card__btn"]}
               href={SITE.phoneHref}
@@ -40,7 +76,7 @@ const heading = areaLabel ? `${areaLabel} ${pricing.heading}` : pricing.heading;
     </div>
 
     <p class="price__note">
-      {pricing.note}
+      {note}
       <a href="/reservation/">요금·예약 기준 자세히 보기 →</a>
     </p>
   </div>

@@ -21,6 +21,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
+import { guIntro, guReserveIntro } from "../lib/prose";
 
 interface Props {
   sidoSlug: string;
@@ -73,6 +74,17 @@ const guSeed = `${citySlug}/${guSlug}`;
 const guReviews = reviewsForArea(sidoSlug, guSeed, 6);
 const rating = ratingForArea(sidoSlug, guSeed, guReviews);
 
+// 시드 문장 변형 — 구마다 본문 문단 구조가 달라진다
+const guVars = {
+  region: `${city.regionName} ${gu.regionName}`,
+  sido: sido.regionName,
+  focus: gu.contentFocus,
+  areas: dongNames,
+  stations: guStations,
+};
+const guAreaIntro = guIntro(guSeed, guVars);
+const guAreaReserve = guReserveIntro(guSeed, guVars);
+
 const schema = [
   breadcrumbSchema([
     { name: "홈", path: "/" },
@@ -121,7 +133,7 @@ const schema = [
   </section>
 
   <!-- 요금표 -->
-  <PriceTable areaLabel={gu.regionName} />
+  <PriceTable areaLabel={gu.regionName} seed={guSeed} />
 
   <!-- 행정동 안내 -->
   <section class="section section-anchor" id="areas">
@@ -187,22 +199,17 @@ const schema = [
   <section class="section">
     <div class="container prose">
       <h2>{city.regionName} {gu.regionName}에서 출장마사지를 찾을 때</h2>
+      {guAreaIntro.map((para) => <p>{para}</p>)}
+      <p>{guAreaReserve}</p>
       <p>
-        {gu.regionName}은 {city.regionName}의 행정구 가운데 하나로, {gu.contentFocus}
-        같은 {city.regionName} 안에서도 {gu.regionName}은 생활권이 달라 방문 가능
-        지역과 동선을 동 단위로 확인하면 예약이 수월합니다.
-        {dongNames.slice(0, 4).join(", ")} 등 대표 행정동을 기준으로 가까운
-        지하철역과 방문 위치(자택·호텔·오피스텔)를 함께 확인하는 방식을 권장합니다.
-      </p>
-      <p>
-        예약 전에는 정확한 방문 주소와 건물 출입 방식, 예약 가능 시간과 추가 이동비
-        기준을 확인하는 것이 좋습니다. {gu.regionName} 방문 예약은 전화{" "}
-        <a href={SITE.phoneHref}>{SITE.phone}</a>로 받으며, 본 사이트는 정보형
-        안내 페이지로 불법·선정적 서비스는 제공하지 않습니다.
+        {gu.regionName} 방문 예약은 전화 <a href={SITE.phoneHref}>{SITE.phone}</a>로
+        받으며, 본 사이트는 정보형 안내 페이지로 불법·선정적 서비스는 제공하지
+        않습니다.
       </p>
 
       <ProgramLinks
         limit={8}
+        seed={guSeed}
         prefix={gu.regionName}
         title={`${gu.regionName} 마사지 프로그램 안내`}
         lead={`${gu.regionName}에서 받을 수 있는 관리 종류별 안내입니다.`}

@@ -8,15 +8,32 @@ interface Props {
   limit?: number;
   title?: string;
   lead?: string;
+  /** 페이지 시드 — 노출 프로그램을 페이지마다 다르게 섞는다 (중복 블록 분산) */
+  seed?: string;
 }
 const {
   prefix = "",
   limit = 12,
   title = "마사지 프로그램 안내",
   lead = "원하는 관리 종류로 자세한 안내를 확인하세요.",
+  seed = "",
 } = Astro.props;
 
-const list = programs.slice(0, limit);
+// 시드가 있으면 프로그램 순서를 결정적으로 섞어 페이지마다 다른 조합을 노출
+function hashSeed(s: string): number {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+let pool = [...programs];
+if (seed) {
+  // 시드 기반 정렬 키로 결정적 셔플
+  pool = pool
+    .map((p, i) => ({ p, k: hashSeed(`${seed}:${p.slug}`) }))
+    .sort((a, b) => a.k - b.k)
+    .map((x) => x.p);
+}
+const list = pool.slice(0, limit);
 const pfx = prefix ? prefix + " " : "";
 ---
 

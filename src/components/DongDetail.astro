@@ -21,7 +21,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
-import { dongIntro } from "../lib/prose";
+import { dongIntro, dongCommerce, dongAccess, dongReserve, dongStationLine, dongHeroSub, checklistItems } from "../lib/prose";
 
 interface Props {
   entry: DetailDongEntry;
@@ -90,15 +90,22 @@ const dongSeed = `${guSlug}/${dong.slug}`;
 const dongReviews = reviewsForArea(sidoSlug, dongSeed, 6);
 const rating = ratingForArea(sidoSlug, dongSeed, dongReviews);
 
-// 시드 기반 문장 변형 — 동마다 생활권 소개 문장이 달라진다
-const dongIntroPara = dongIntro(dongSeed, {
+// 시드 기반 문장 변형 — 동마다 본문 문단 구조가 달라진다 (중복 본문 방지)
+const dvars = {
   dong: dong.name,
   gu: gu.regionName,
   character: detail.character,
   landmarks: detail.landmarks,
   adjacent: detail.adjacentAreas,
   stations: detail.nearbyStations,
-});
+};
+const dongIntroPara = dongIntro(dongSeed, dvars);
+const dongCommercePara = dongCommerce(dongSeed, dvars);
+const dongAccessPara = dongAccess(dongSeed, dvars);
+const dongReservePara = dongReserve(dongSeed, dvars);
+const dongStationLineText = dongStationLine(dongSeed, dvars);
+const dongHeroSubText = dongHeroSub(dongSeed, dvars);
+const checkItems = checklistItems(dongSeed);
 
 const schema = [
   breadcrumbSchema(crumbs),
@@ -117,10 +124,7 @@ const schema = [
         {sidoName(sidoSlug)} {gu.regionName}{parentGu ? ` ${parentGu.regionName}` : ""} · {dong.name}
       </span>
       <h1>{dong.name} 출장마사지 · {dong.name} 홈타이 예약 안내</h1>
-      <p class="hero__sub" style="color:var(--text-soft)">
-        {detail.character} {dong.name}의 방문 가능 생활권과 예약 전 확인사항을
-        안내합니다. {detail.adjacentAreas.join(", ")} 인접 지역도 함께 확인하세요.
-      </p>
+      <p class="hero__sub" style="color:var(--text-soft)">{dongHeroSubText}</p>
       <div class="hero__cta" style="margin-top:18px">
         <a class="btn btn--cta" href={SITE.phoneHref}>전화예약 {SITE.phone}</a>
         {
@@ -148,30 +152,19 @@ const schema = [
   </section>
 
   <!-- 요금표 (메인 + 모든 지역 페이지 공통) -->
-  <PriceTable areaLabel={dong.name} />
+  <PriceTable areaLabel={dong.name} seed={dongSeed} />
 
   <section class="section">
     <div class="container prose">
       <h2>{dong.name} 주변 상권·주거 환경</h2>
-      <p>
-        {dong.name} 일대는 {detail.character} 특성이 뚜렷해, 오피스텔·아파트·숙소가
-        혼재한 구간과 주거 전용 구간의 방문 조건이 다릅니다. {lm[0]} 인근은
-        상업·업무 수요가 많고, {adj[0]} 방향 주거 구간은 야간·주말 방문 가능 여부
-        확인이 중요합니다. 같은 {dong.name}이라도 위치에 따라 방문 가능 시간과
-        동선을 개별적으로 확인하는 방식을 권장합니다.
-      </p>
+      <p>{dongCommercePara}</p>
 
       <h2>{dong.name} 주변 방문 가능 지역</h2>
       <p>{detail.p2}</p>
-      <p>
-        {sts.map((s) => `${s} 인근`).join(", ")}을 기준으로 접근할 수 있으며,
-        {adj.join(", ")} 방향으로 이동하는 경우 거리와 시간대에 따라 추가 이동비
-        기준이 달라질 수 있습니다. 예약 시 {dong.name} 내 정확한 방문 주소를
-        먼저 확인하면 방문 동선을 안내받기 쉽습니다.
-      </p>
+      <p>{dongAccessPara}</p>
 
       <h3>{dong.name} 인근 지하철역</h3>
-      <p>{dong.name}과 가까운 지하철역을 기준으로 방문 동선을 확인할 수 있습니다.</p>
+      <p>{dongStationLineText}</p>
       <div class="chip-list">
         {
           detail.nearbyStations.map((name) => {
@@ -202,29 +195,10 @@ const schema = [
 
       <h2>{dong.name} 예약 전 확인사항</h2>
       <p>{detail.p3}</p>
-      <p>
-        {dong.name} 방문 예약은 전화 {SITE.phone}로 받으며,
-        {sts[0]} 기준 방문 동선과 {adj[0]} 인접 지역 이동 여부를 함께 확인하면
-        예약이 빠릅니다. {gu.regionName} {dong.name}은 {detail.character} 특성을
-        고려해 방문 가능 시간과 추가 이동비 기준을 예약 시 안내합니다.
-      </p>
+      <p>{dongReservePara}</p>
       <ul>
-        <li>방문 가능 주소 확인 (자택·호텔·오피스텔 동·호수)</li>
-        <li>건물 출입 방식(공동현관·프런트) 확인</li>
-        <li>예약 가능 시간과 추가 이동비 여부 확인</li>
-        <li>결제 방식·예약 변경 기준 확인</li>
-        <li>개인정보 처리 기준 확인 / 불법·선정적 서비스 불가 안내</li>
+        {checkItems.map((it) => <li>{it}</li>)}
       </ul>
-
-      <table class="info-table">
-        <tbody>
-          <tr><th>상호</th><td>{SITE.name}</td></tr>
-          <tr><th>전화예약</th><td><a href={SITE.phoneHref}>{SITE.phone}</a></td></tr>
-          <tr><th>안내 지역</th><td>{gu.regionName} {dong.name} 및 인접 생활권</td></tr>
-          <tr><th>기본 요금</th><td>60분 90,000원 · 90분 150,000원 · 120분 180,000원</td></tr>
-          <tr><th>추가 이동비</th><td>지역·시간대·거리에 따라 예약 시 안내</td></tr>
-        </tbody>
-      </table>
 
       <div class="notice notice--warn">
         <div class="notice__title">예약 안내</div>
@@ -236,18 +210,11 @@ const schema = [
 
       <ProgramLinks
         limit={8}
+        seed={dongSeed}
         prefix={dong.name}
         title={`${dong.name} 마사지 프로그램 안내`}
         lead={`${dong.name}에서 받을 수 있는 관리 종류별 안내입니다.`}
       />
-
-      <h2>{dong.name} 페이지 중복 방지 운영 기준</h2>
-      <p>
-        {dong.name} 페이지는 동 단위 생활권을 설명하고, {gu.regionName} 페이지는
-        구 전체를, 역 페이지는 역 주변을 설명하도록 역할을 나눕니다. {dong.name}은
-        {detail.landmarks.length ? ` ${detail.landmarks.join(", ")} 등 ` : " "}실제
-        생활권 특성을 중심으로 작성해 같은 본문 반복을 피합니다.
-      </p>
 
       <h2>{dong.name} 자주 묻는 질문</h2>
       <div class="faq">
