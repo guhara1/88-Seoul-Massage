@@ -11,6 +11,7 @@ import {
   dongPathByName,
 } from "../../../lib/data";
 import { breadcrumbSchema, faqSchema, serviceAreaSchema } from "../../../lib/seo";
+import { lifeAccess, lifeStation, lifeReserve } from "../../../lib/prose";
 
 export function getStaticPaths() {
   return lifeAreas.map((l) => ({
@@ -22,6 +23,13 @@ export function getStaticPaths() {
 const { l } = Astro.props;
 const sido = getSido(l.sidoSlug)!;
 const path = `/life/${l.sidoSlug}/${l.slug}/`;
+
+// 시드 문장 변형 — 생활권마다 보강 문단이 달라진다 (중복 본문 방지)
+const lseed = `${l.sidoSlug}/${l.slug}`;
+const lvars = { name: l.name, sido: sido.regionName, areas: l.memberAreas, stations: l.memberStations };
+const lifeAccessText = lifeAccess(lseed, lvars);
+const lifeStationText = lifeStation(lseed, lvars);
+const lifeReserveText = lifeReserve(lseed, lvars);
 
 const title = `${l.name} 출장마사지｜${sido.regionName} ${l.name} 홈타이 생활권 안내`;
 const description = `${sido.regionName} ${l.name} 출장마사지·홈타이 방문 가능 생활권과 인접 역을 확인하세요.`;
@@ -70,12 +78,8 @@ const schema = [
       <h2>{l.name} 방문 가능 지역과 동선</h2>
       <p>{l.p2}</p>
       <p>
-        {l.name}은 {l.memberAreas.join(", ")} 등 행정동과
-        {" "}{l.memberStations.join(", ")} 인근 역을 아우르는 생활권입니다. 같은
-        생활권 안에서도 업무·상권 구역과 주거 구역의 방문 조건이 다르므로,
-        자택·호텔·오피스텔 위치에 따라 가까운 동과 역을 함께 확인하면 동선을 잡기
-        쉽습니다. {sidoName(l.sidoSlug)}의 다른 생활권과 비교해 방문 위치를 정하고
-        싶다면 <a href={`/area/${l.sidoSlug}/`}>{sido.regionName} 지역 안내</a>를
+        {lifeAccessText} {sidoName(l.sidoSlug)}의 다른 생활권과 비교해 방문 위치를
+        정하고 싶다면 <a href={`/area/${l.sidoSlug}/`}>{sido.regionName} 지역 안내</a>를
         함께 참고하세요.
       </p>
 
@@ -107,14 +111,9 @@ const schema = [
         }
       </div>
       <p>
-        위 역들은 {l.name}에서 가까운 지하철역으로, 역마다 출구 방향과 주변 상권이
-        달라 도보·차량 동선이 조금씩 다릅니다. 방문 위치가 역과 가까우면 비교적
-        빠르게 안내가 가능하고, 역에서 떨어진 주거 단지는 도착 시간이 더 걸릴 수
-        있으므로 예약 시 희망 시간을 넉넉히 알려 주시면 좋습니다. 각 역의 상세
-        생활권은 역 페이지에서 확인할 수 있습니다. {l.name}과 인접한 다른 생활권,
-        그리고 <a href={`/area/${l.sidoSlug}/`}>{sido.regionName}</a>의 지역·역
-        안내를 함께 살펴보면 {sido.regionName}에서 가까운 방문 위치를 더 정확히
-        정할 수 있습니다.
+        {lifeStationText} 각 역의 상세 생활권은 역 페이지에서 확인할 수 있으며,
+        <a href={`/area/${l.sidoSlug}/`}>{sido.regionName}</a>의 지역·역 안내를
+        함께 살펴보면 가까운 방문 위치를 더 정확히 정할 수 있습니다.
       </p>
     </div>
   </section>
@@ -131,12 +130,8 @@ const schema = [
         <a href="/reservation/">예약 안내</a>를 참고하세요.
       </p>
       <p>
-        {l.name}에서 출장마사지·홈타이를 예약할 때는 방문 위치(자택·호텔·오피스텔)와
-        희망 시간, 관리 종류를 먼저 정리해 두면 빠릅니다. {l.memberStations[0]}
-        인근처럼 역과 가까운 곳은 이동 부담이 적은 편이고, 외곽 주거 구역은 거리와
-        시간대에 따라 추가 이동비 기준이 달라질 수 있습니다. 같은 {l.name} 안에서도
-        위치별로 방문 가능 시간이 다를 수 있어, 예약 시 정확한 주소와 건물 출입
-        방법(공동현관·동·호수)을 함께 확인하면 방문이 매끄럽습니다.
+        {lifeReserveText} 예약 시 정확한 주소와 건물 출입 방법(공동현관·동·호수)을
+        함께 확인하면 방문이 매끄럽습니다.
       </p>
       <div class="notice notice--warn">
         <div class="notice__title">예약 안내</div>
@@ -153,6 +148,8 @@ const schema = [
       </p>
 
       <ProgramLinks
+        limit={8}
+        seed={lseed}
         prefix={l.name}
         title={`${l.name} 마사지 프로그램 안내`}
         lead={`${l.name}에서 받을 수 있는 관리 종류별 안내입니다.`}

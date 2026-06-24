@@ -182,6 +182,77 @@ export function guNeighbor(seed: string, v: GuVars): string {
   ]);
 }
 
+/** 서비스 안내 보강 문단 — 시드(슬러그) 변형, 서비스 고유 데이터 결합 */
+export function serviceIntro(
+  seed: string,
+  v: { name: string; short: string; focus: string; point: string }
+): string {
+  return pick(seed, "sv.intro", [
+    `${v.name}은(는) ${v.focus}을(를) 중심으로 진행하며, ${v.point} 점을 함께 고려해 안내합니다. 방문 위치와 희망 시간에 맞춰 구성과 시간을 조정할 수 있습니다.`,
+    `${v.short} 관리는 ${v.focus}에 초점을 두고, ${v.point} 부분까지 함께 살펴봅니다. 예약 시 원하는 강도와 부위를 알려 주시면 구성을 맞춰 안내합니다.`,
+    `${v.focus}을(를) 기준으로 하는 ${v.name}은(는) ${v.point} 점을 보완하는 방식으로 진행됩니다. 처음이시라면 희망 부위와 강도를 미리 알려 주시면 좋습니다.`,
+  ]);
+}
+
+/** 서비스 "예약 전 확인" 안내 — 시드 변형 */
+export function serviceNotice(seed: string): string {
+  return pick(seed, "sv.notice", [
+    `방문 위치에 따라 출입·주소 확인 기준이 다릅니다.`,
+    `자택·숙소·오피스텔 중 어디로 방문하느냐에 따라 준비할 정보가 달라집니다.`,
+    `방문 건물 유형에 따라 출입 절차와 주소 확인 방식이 달라집니다.`,
+  ]);
+}
+
+interface LifeVars {
+  name: string;
+  sido: string;
+  areas: string[];
+  stations: string[];
+}
+
+/** 생활권 방문 가능 지역·동선 보강 — 시드 변형 */
+export function lifeAccess(seed: string, v: LifeVars): string {
+  const a = v.areas.slice(0, 4).join(", ");
+  const st = v.stations.slice(0, 3).join(", ");
+  return compose(seed, [
+    {
+      slot: "lf.a",
+      variants: [
+        `${v.name}은 ${a} 등 행정동과 ${st} 인근 역을 아우르는 생활권입니다.`,
+        `${a} 같은 행정동과 ${st} 역세권이 ${v.name} 생활권을 이룹니다.`,
+        `${v.name}은 ${st}을 축으로 ${a} 일대를 묶는 생활권으로 볼 수 있습니다.`,
+      ],
+    },
+    {
+      slot: "lf.b",
+      variants: [
+        `같은 생활권 안에서도 업무·상권 구역과 주거 구역의 방문 조건이 달라, 자택·호텔·오피스텔 위치에 따라 가까운 동과 역을 함께 확인하면 동선을 잡기 쉽습니다.`,
+        `상권 쪽과 주거 쪽의 방문 여건이 달라, 방문 위치에 맞는 가까운 동·역을 먼저 정하면 동선이 깔끔해집니다.`,
+        `생활권이 넓어 구역마다 분위기가 다르므로, 방문 위치를 기준으로 가까운 동과 역을 함께 살펴보는 편이 좋습니다.`,
+      ],
+    },
+  ]);
+}
+
+/** 생활권 인접역 보강 — 시드 변형 */
+export function lifeStation(seed: string, v: LifeVars): string {
+  return pick(seed, "lf.st", [
+    `위 역들은 ${v.name}에서 가까운 지하철역으로, 역마다 출구 방향과 주변 상권이 달라 도보·차량 동선이 조금씩 다릅니다. 방문 위치가 역과 가까우면 비교적 빠르게 안내가 가능하고, 역에서 떨어진 주거 단지는 도착 시간이 더 걸릴 수 있습니다.`,
+    `${v.name} 인근 역은 출구와 상권 구성이 제각각이라 접근 동선이 조금씩 다릅니다. 역세권은 도착이 빠른 편이고, 외곽 주거 단지는 시간이 더 필요할 수 있어 희망 시간을 넉넉히 알려 주시면 좋습니다.`,
+    `위 역들을 기준으로 ${v.name} 방문 동선을 잡을 수 있으며, 역과의 거리에 따라 도보·차량 접근과 도착 시간이 달라집니다.`,
+  ]);
+}
+
+/** 생활권 이용 전 확인 보강 — 시드 변형 */
+export function lifeReserve(seed: string, v: LifeVars): string {
+  const st0 = v.stations[0] ?? "인근 역";
+  return pick(seed, "lf.res", [
+    `${v.name}에서 예약할 때는 방문 위치와 희망 시간, 관리 종류를 먼저 정리해 두면 빠릅니다. ${st0} 인근처럼 역과 가까운 곳은 이동 부담이 적고, 외곽 주거 구역은 거리·시간대에 따라 추가 이동비 기준이 달라질 수 있습니다.`,
+    `${v.name} 예약 전 방문 위치(자택·호텔·오피스텔)와 시간대를 정해 두면 안내가 매끄럽습니다. ${st0} 가까운 구역은 부담이 적고, 외곽은 시간대에 따라 기준이 달라집니다.`,
+    `${st0}을 기준으로 ${v.name} 방문 위치를 먼저 정하고 희망 시간을 알려 주시면, 가능한 동선과 추가 이동비 기준을 빠르게 안내받을 수 있습니다.`,
+  ]);
+}
+
 interface StationVars {
   station: string;
   sido: string;
