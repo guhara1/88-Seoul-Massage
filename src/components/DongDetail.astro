@@ -21,6 +21,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
+import { dongIntro } from "../lib/prose";
 
 interface Props {
   entry: DetailDongEntry;
@@ -89,6 +90,16 @@ const dongSeed = `${guSlug}/${dong.slug}`;
 const dongReviews = reviewsForArea(sidoSlug, dongSeed, 6);
 const rating = ratingForArea(sidoSlug, dongSeed, dongReviews);
 
+// 시드 기반 문장 변형 — 동마다 생활권 소개 문장이 달라진다
+const dongIntroPara = dongIntro(dongSeed, {
+  dong: dong.name,
+  gu: gu.regionName,
+  character: detail.character,
+  landmarks: detail.landmarks,
+  adjacent: detail.adjacentAreas,
+  stations: detail.nearbyStations,
+});
+
 const schema = [
   breadcrumbSchema(crumbs),
   serviceAreaSchemaWithReviews(dong.name, path, dongReviews, rating.avg),
@@ -123,13 +134,7 @@ const schema = [
 
       <h2>{dong.name} 생활권 소개</h2>
       <p>{detail.p1}</p>
-      <p>
-        {dong.name}은 {lm.join(", ")} 일대를 중심으로 {detail.character} 생활권을
-        형성합니다. {gu.regionName} 안에서도 {dong.name}은 상권과 주거지가 만나는
-        위치라, 방문 가능 지역과 동선을 함께 확인하면 예약이 수월합니다.
-        {sts.join(", ")} 등 가까운 역과 {adj.join(", ")} 인접 지역을 함께
-        고려하는 방식을 권장합니다.
-      </p>
+      <p>{dongIntroPara}</p>
       {
         detail.landmarks.length > 0 && (
           <div class="chip-list" style="margin:8px 0 4px">

@@ -23,6 +23,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
 import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
+import { guIntro } from "../../../lib/prose";
 
 export function getStaticPaths() {
   return sigungus.map((g) => ({
@@ -101,6 +102,15 @@ const faq = [
 const areaReviews = reviewsForArea(g.parentSlug, g.regionSlug, 6);
 const rating = ratingForArea(g.parentSlug, g.regionSlug, areaReviews);
 
+// 시드 기반 문장 변형 — 지역마다 도입부 문장 구조가 달라진다 (중복 본문 방지)
+const introParas = guIntro(`${g.parentSlug}/${g.regionSlug}`, {
+  region: g.regionName,
+  sido: sido.regionName,
+  focus: g.contentFocus,
+  areas: g.nearbyAreas,
+  stations: ns,
+});
+
 const schema = noindex
   ? []
   : [
@@ -154,28 +164,13 @@ const schema = noindex
   <section class="section" style="padding-top:0">
     <div class="container prose">
       <h2>{g.regionName}에서 출장마사지를 찾을 때 먼저 확인할 기준</h2>
+      {introParas.map((para) => <p>{para}</p>)}
       <p>
-        {g.regionName}에서 출장마사지와 홈타이를 찾을 때는 {g.contentFocus} 점을 함께 확인하면 좋습니다. {g.regionName}은 생활권마다 상권과 주거지, 오피스텔 분포가 달라 방문 가능 지역 확인 기준도 조금씩 다릅니다. {g.nearbyAreas.slice(0, 3).join(", ")} 등 대표 생활권을 기준으로 가까운 지하철역과 방문 동선을 함께 확인하면 예약이 수월합니다. 방문 위치(자택·호텔·오피스텔)와 시간대, 이동 거리에 따라 예약 가능 시간과 추가 이동비 기준이 달라질 수 있으므로, 예약 전에 정확한 주소와 건물 출입 방식을 확인하는 방식을 권장합니다.
-      </p>
-      <p>
-        {g.regionName}과 가까운 지하철역으로는 {ns.join(", ")} 등이 있어, 역세권 생활권과 주거지 생활권의 방문 동선이 다릅니다. 업무지구·오피스텔이 밀집한 생활권은 평일 낮과 저녁 시간대 수요가 많고, 주거지 중심 생활권은 야간·주말 방문 가능 여부 확인이 중요합니다. {g.regionName}의 각 지역 페이지에서는 행정동별 특성과 인접 역, 근처 상권 정보를 함께 제공하므로, 방문 예정 지역을 미리 확인한 후 전화 예약을 하면 보다 정확한 방문 동선을 안내받을 수 있습니다.
-      </p>
-      {
-        !dense && (
-          <p>
-            {g.regionName}의 대표 지역별로 생활권 특성이 다르므로, 방문 가능 지역과 추가 이동비 기준도 지역마다 다를 수 있습니다. 예를 들어 {pairA0}은(는) {ns[0]} 인근 생활권과, {pairA1}은(는) {ns[1 % ns.length]} 인근 생활권과 함께 확인할 수 있으며, {pairA2} 등 인접 지역도 같은 {g.regionName} 안에서 생활권별로 특색이 다릅니다. 자택·숙소·오피스텔 위치와 희망 시간을 먼저 정리해 두면 예약이 빠르고 수월합니다.
-          </p>
-        )
-      }
-      {
-        smallList && (
-          <p>
-            {g.regionName} 내 각 지역은 상권, 주거지, 업무 지구 특성에 따라 방문 동선이 달라집니다. 같은 {g.regionName}이라도 지역에 따라 방문 가능 시간과 추가 이동비가 다르므로, 자택·호텔·오피스텔 등 방문 위치의 정확한 주소와 건물 출입 방식을 미리 확인하는 것이 중요합니다. {g.regionName} 내 대표 생활권을 중심으로 지하철역 정보를 함께 파악하면, 보다 효율적인 방문 동선을 잡을 수 있습니다.
-          </p>
-        )
-      }
-      <p>
-        {g.regionName} 출장마사지 예약은 <a href={SITE.phoneHref}>{SITE.phone}</a>로 전화하시면 됩니다. 방문 위치와 희망 시간, 원하는 관리 종류를 알려주시면, {g.regionName} 내 방문 가능 생활권과 추가 이동비 기준을 정확하게 안내받을 수 있습니다.
+        방문 위치(자택·호텔·오피스텔)와 시간대, 이동 거리에 따라 예약 가능 시간과
+        추가 이동비 기준이 달라질 수 있으므로, 예약 전에 정확한 주소와 건물 출입
+        방식을 확인하는 방식을 권장합니다. {g.regionName} 출장마사지 예약은
+        <a href={SITE.phoneHref}>{SITE.phone}</a>로 전화하시면, 방문 위치와 희망
+        시간에 맞춰 가능한 동선과 추가 이동비 기준을 안내받을 수 있습니다.
       </p>
     </div>
   </section>
