@@ -18,7 +18,7 @@ import {
   serviceAreaSchema,
   aggregateRatingSchema,
 } from "../../../lib/seo";
-import reviews from "../../../data/reviews.json";
+import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
 
 export function getStaticPaths() {
   return sidos.map((s) => ({ params: { sido: s.regionSlug }, props: { s } }));
@@ -66,10 +66,9 @@ const faq = [
   },
 ];
 
-// 현재 시도의 후기 필터링
-const regionReviews = reviews.filter(
-  (r) => r.parentSlug === s.regionSlug
-);
+// 시드 기반 결정적 셔플 — 시도 페이지마다 다른 6개를 노출
+const regionReviews = reviewsForArea(s.regionSlug, null, 6);
+const rating = ratingForArea(s.regionSlug, null, regionReviews);
 
 const schema = [
   breadcrumbSchema([
@@ -80,7 +79,7 @@ const schema = [
   serviceAreaSchema(`${s.sido} 출장마사지·홈타이`, path),
   faqSchema(faq),
   ...(regionReviews.length > 0
-    ? [aggregateRatingSchema(s.regionName, regionReviews)]
+    ? [aggregateRatingSchema(s.regionName, regionReviews, rating.avg)]
     : []),
 ].filter(Boolean);
 ---
@@ -219,6 +218,9 @@ const schema = [
         방문 위치에 따라 출입 방법과 주소 확인 기준이 다릅니다. 예약 전
         <a href="/guide/before-use/">이용 전 확인사항</a>과
         <a href="/reservation/">예약 안내</a>를 함께 확인하시면 방문이 원활합니다.
+        도로명 주소가 헷갈리실 경우
+        <a href="https://www.juso.go.kr/" target="_blank" rel="noopener">행정안전부 도로명주소</a>에서
+        정확히 확인하실 수 있습니다.
       </p>
       <p>
         {s.regionName}에서 자택은 상세 주소와 출입 동선을, 호텔·숙소는 객실 호수와
@@ -249,7 +251,7 @@ const schema = [
     </div>
   </section>
 
-  {regionReviews.length > 0 && <ReviewSection areaName={s.regionName} reviews={regionReviews} />}
+  {regionReviews.length > 0 && <ReviewSection areaName={s.regionName} reviews={regionReviews} displayRating={rating.avg} />}
 
   <section class="section">
     <div class="container container--narrow">

@@ -10,13 +10,18 @@ interface Props {
     title: string;
     content: string;
   }>;
+  /** 표시 평점 (선택). 미지정 시 reviews 평균을 사용 */
+  displayRating?: number;
 }
 
-const { areaName, reviews } = Astro.props;
+const { areaName, reviews, displayRating } = Astro.props;
 
-const avgRating = reviews.length > 0
-  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-  : 0;
+const computedAvg =
+  reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+const avgRating = (displayRating ?? computedAvg).toFixed(1);
+const avgNum = parseFloat(avgRating);
 
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
@@ -33,7 +38,7 @@ const formatDate = (dateStr: string) => {
         <div class="rating-score">{avgRating}</div>
         <div class="stars">
           {Array.from({ length: 5 }, (_, i) => (
-            <span class={`star ${i < Math.round(parseFloat(avgRating as unknown as string)) ? "filled" : ""}`}>★</span>
+            <span class={`star ${i < Math.round(avgNum) ? "filled" : ""}`}>★</span>
           ))}
         </div>
         <p class="rating-count">{reviews.length}개의 후기</p>

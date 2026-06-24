@@ -20,7 +20,7 @@ import {
   serviceAreaSchema,
   aggregateRatingSchema,
 } from "../../../../lib/seo";
-import reviews from "../../../../data/reviews.json";
+import { reviewsForArea, ratingForArea } from "../../../../lib/reviews";
 
 export function getStaticPaths() {
   return allDetailDongs().map((e) => ({
@@ -72,10 +72,10 @@ const faq = [
   },
 ];
 
-// 현재 동/지역의 후기 필터링 (시도 + 구 기준)
-const dongReviews = reviews.filter(
-  (r) => r.parentSlug === sidoSlug && r.regionSlug === guSlug
-);
+// 동 슬러그까지 시드에 포함 — 942개 페이지가 모두 다른 후기 6개 노출
+const dongSeedRegion = `${guSlug}/${dong.slug}`;
+const dongReviews = reviewsForArea(sidoSlug, dongSeedRegion, 6);
+const rating = ratingForArea(sidoSlug, dongSeedRegion, dongReviews);
 
 const schema = [
   breadcrumbSchema([
@@ -88,7 +88,7 @@ const schema = [
   serviceAreaSchema(`${dong.name} 출장마사지·홈타이`, path),
   faqSchema(faq),
   ...(dongReviews.length > 0
-    ? [aggregateRatingSchema(dong.name, dongReviews)]
+    ? [aggregateRatingSchema(dong.name, dongReviews, rating.avg)]
     : []),
 ].filter(Boolean);
 ---
@@ -253,5 +253,5 @@ const schema = [
     </div>
   </section>
 
-  {dongReviews.length > 0 && <ReviewSection areaName={dong.name} reviews={dongReviews} />}
+  {dongReviews.length > 0 && <ReviewSection areaName={dong.name} reviews={dongReviews} displayRating={rating.avg} />}
 </BaseLayout>

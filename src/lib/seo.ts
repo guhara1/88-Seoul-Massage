@@ -127,20 +127,22 @@ interface ReviewItem {
   content: string;
 }
 
-/** 고객 후기 및 평점 스키마 */
+/** 고객 후기 및 평점 스키마 (페이지별로 값이 달라질 수 있도록 외부 avg 주입) */
 export function aggregateRatingSchema(
   areaName: string,
-  reviews: ReviewItem[]
+  reviews: ReviewItem[],
+  displayAvg?: number
 ) {
   if (reviews.length === 0) return null;
 
-  const avgRating =
+  const computed =
     reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  const avg = displayAvg ?? computed;
 
   return {
     "@context": "https://schema.org",
     "@type": "AggregateRating",
-    ratingValue: parseFloat(avgRating.toFixed(1)),
+    ratingValue: parseFloat(avg.toFixed(1)),
     ratingCount: reviews.length,
     bestRating: 5,
     worstRating: 1,
