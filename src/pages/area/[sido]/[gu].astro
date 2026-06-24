@@ -23,7 +23,7 @@ import {
   serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
 import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
-import { guIntro, guReserveIntro, guVisitNote, guNeighbor, guHeroSub, guLifeLead, guAreaLead, guStationLead, checklistItems, h1Gu, h2Intro, h2Reserve } from "../../../lib/prose";
+import { guIntro, guReserveIntro, guVisitNote, guNeighbor, guHeroSub, guLifeLead, guAreaLead, guStationLead, checklistItems, h1Gu, h2Intro, h2Reserve, h2AreaSection, h2StationSection, h2LifeSection } from "../../../lib/prose";
 
 export function getStaticPaths() {
   return sigungus.map((g) => ({
@@ -123,6 +123,9 @@ const guStationLeadText = guStationLead(gseed, gvars);
 const h1Text = h1Gu(gseed, g.regionName);
 const h2IntroText = h2Intro(gseed, g.regionName);
 const h2ReserveText = h2Reserve(gseed, g.regionName);
+const h2AreaText = h2AreaSection(gseed, g.regionName);
+const h2StationText = h2StationSection(gseed, g.regionName);
+const h2LifeText = h2LifeSection(gseed, g.regionName);
 
 const schema = noindex
   ? []
@@ -213,7 +216,7 @@ const schema = noindex
           <Fragment>
             <div class="section__head">
               <span class="eyebrow">지역별 안내</span>
-              <h2 class="section__title">{g.regionName} 대표 지역별 방문 가능 지역 안내</h2>
+              <h2 class="section__title">{h2AreaText}</h2>
               <p class="section__lead">{guAreaLeadText}</p>
             </div>
             <div class="area-rows">
@@ -247,7 +250,7 @@ const schema = noindex
     <div class="container">
       <div class="section__head">
         <span class="eyebrow">역세권 안내</span>
-        <h2 class="section__title">{g.regionName} 주요 지하철역별 홈타이 안내</h2>
+        <h2 class="section__title">{h2StationText}</h2>
         <p class="section__lead">{guStationLeadText}</p>
       </div>
       {
@@ -301,7 +304,7 @@ const schema = noindex
     <div class="container">
       <div class="section__head">
         <span class="eyebrow">생활권 안내</span>
-        <h2 class="section__title">{g.regionName} 인근 생활권 예약 기준</h2>
+        <h2 class="section__title">{h2LifeText}</h2>
         <p class="section__lead">{guLifeLeadText}</p>
       </div>
       <div class="chip-list">
