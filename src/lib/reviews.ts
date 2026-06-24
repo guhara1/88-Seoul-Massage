@@ -85,18 +85,19 @@ export function reviewsForArea(
   return out;
 }
 
-/** 페이지마다 평점이 살짝 달라지도록 시드 기반 미세 조정 (4.6 ~ 4.9 범위) */
+/**
+ * 표시 후기의 실제 평균을 평점으로 사용한다.
+ * 후기 자체가 페이지마다 시드 셔플되므로 평균도 자연스럽게 달라지며,
+ * aggregateRating 값이 실제 review[] 배열과 일치해 구글 구조화 데이터
+ * 일관성 검사를 통과한다. (인위적 drift 제거)
+ */
 export function ratingForArea(
-  parentSlug: string,
-  regionSlug: string | null,
+  _parentSlug: string,
+  _regionSlug: string | null,
   reviews: Review[]
 ): { avg: number; count: number } {
   if (reviews.length === 0) return { avg: 0, count: 0 };
   const raw =
     reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-  const seed = hashSeed(`${parentSlug}/${regionSlug ?? ""}:rating`);
-  // ±0.15 범위 변동
-  const drift = ((seed % 31) - 15) / 100;
-  const adjusted = Math.min(5, Math.max(4.5, raw + drift));
-  return { avg: Math.round(adjusted * 10) / 10, count: reviews.length };
+  return { avg: Math.round(raw * 10) / 10, count: reviews.length };
 }

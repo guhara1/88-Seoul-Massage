@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import PriceTable from "../../../components/PriceTable.astro";
 import ProgramLinks from "../../../components/ProgramLinks.astro";
+import ReviewSection from "../../../components/ReviewSection.astro";
 import { SITE, sidoName } from "../../../lib/site";
 import {
   stations,
@@ -14,8 +15,9 @@ import {
 import {
   breadcrumbSchema,
   faqSchema,
-  serviceAreaSchema,
+  serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
+import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
 
 export function getStaticPaths() {
   return stations.map((st) => ({
@@ -55,6 +57,18 @@ const faq = [
   },
 ];
 
+// 역 시드 셔플 후기 — 역명 슬러그 기준으로 페이지마다 다른 6개 노출
+const stReviews = reviewsForArea(
+  st.stationGroup,
+  `station/${st.sigunguSlug}/${st.stationSlug}`,
+  6
+);
+const stRating = ratingForArea(
+  st.stationGroup,
+  `station/${st.sigunguSlug}/${st.stationSlug}`,
+  stReviews
+);
+
 const schema = noindex
   ? []
   : [
@@ -64,7 +78,12 @@ const schema = noindex
         { name: `${sido?.regionName} 역`, path: `/station/${st.stationGroup}/` },
         { name: st.stationName, path },
       ]),
-      serviceAreaSchema(`${st.stationName} 인근 출장마사지·홈타이`, path),
+      serviceAreaSchemaWithReviews(
+        `${st.stationName} 인근`,
+        path,
+        stReviews,
+        stRating.avg
+      ),
       faqSchema(faq),
     ];
 ---
@@ -236,4 +255,8 @@ const schema = noindex
       </div>
     </div>
   </section>
+
+  {!noindex && stReviews.length > 0 && (
+    <ReviewSection areaName={`${st.stationName} 인근`} reviews={stReviews} displayRating={stRating.avg} />
+  )}
 </BaseLayout>

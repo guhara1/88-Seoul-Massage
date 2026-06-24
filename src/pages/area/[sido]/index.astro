@@ -15,8 +15,7 @@ import {
 import {
   breadcrumbSchema,
   faqSchema,
-  serviceAreaSchema,
-  aggregateRatingSchema,
+  serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
 import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
 
@@ -76,12 +75,9 @@ const schema = [
     { name: "지역 안내", path: "/area/" },
     { name: s.regionName, path },
   ]),
-  serviceAreaSchema(`${s.sido} 출장마사지·홈타이`, path),
+  serviceAreaSchemaWithReviews(s.regionName, path, regionReviews, rating.avg),
   faqSchema(faq),
-  ...(regionReviews.length > 0
-    ? [aggregateRatingSchema(s.regionName, regionReviews, rating.avg)]
-    : []),
-].filter(Boolean);
+];
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>

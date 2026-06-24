@@ -20,10 +20,9 @@ import {
 import {
   breadcrumbSchema,
   faqSchema,
-  serviceAreaSchema,
-  aggregateRatingSchema,
+  serviceAreaSchemaWithReviews,
 } from "../../../lib/seo";
-import reviews from "../../../data/reviews.json";
+import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
 
 export function getStaticPaths() {
   return sigungus.map((g) => ({
@@ -98,10 +97,9 @@ const faq = [
   },
 ];
 
-// 현재 지역의 후기 필터링
-const areaReviews = reviews.filter(
-  (r) => r.parentSlug === g.parentSlug && r.regionSlug === g.regionSlug
-);
+// 시드 기반 셔플 — 페이지마다 다른 6개 노출 (동일 본문 도어웨이 신호 완화)
+const areaReviews = reviewsForArea(g.parentSlug, g.regionSlug, 6);
+const rating = ratingForArea(g.parentSlug, g.regionSlug, areaReviews);
 
 const schema = noindex
   ? []
@@ -112,12 +110,9 @@ const schema = noindex
         { name: sido.regionName, path: `/area/${g.parentSlug}/` },
         { name: g.regionName, path },
       ]),
-      serviceAreaSchema(`${g.regionName} 출장마사지·홈타이`, path),
+      serviceAreaSchemaWithReviews(g.regionName, path, areaReviews, rating.avg),
       faqSchema(faq),
-      ...(areaReviews.length > 0
-        ? [aggregateRatingSchema(g.regionName, areaReviews)]
-        : []),
-    ].filter(Boolean);
+    ];
 ---
 
 <BaseLayout
@@ -414,5 +409,5 @@ const schema = noindex
     </div>
   </section>
 
-  {areaReviews.length > 0 && <ReviewSection areaName={g.regionName} reviews={areaReviews} />}
+  {areaReviews.length > 0 && <ReviewSection areaName={g.regionName} reviews={areaReviews} displayRating={rating.avg} />}
 </BaseLayout>

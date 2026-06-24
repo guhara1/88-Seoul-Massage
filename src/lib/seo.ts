@@ -127,24 +127,76 @@ interface ReviewItem {
   content: string;
 }
 
-/** 고객 후기 및 평점 스키마 (페이지별로 값이 달라질 수 있도록 외부 avg 주입) */
-export function aggregateRatingSchema(
+/** 개별 Review 노드 — Service/LocalBusiness 내부 중첩용 */
+function reviewNode(r: ReviewItem) {
+  return {
+    "@type": "Review",
+    author: { "@type": "Person", name: r.author },
+    datePublished: r.date,
+    name: r.title,
+    reviewBody: r.content,
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: r.rating,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  };
+}
+
+/** AggregateRating 노드 (중첩용, @context 없음) */
+function aggregateRatingNode(reviews: ReviewItem[], displayAvg?: number) {
+  const computed =
+    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  const avg = displayAvg ?? computed;
+  return {
+    "@type": "AggregateRating",
+    ratingValue: parseFloat(avg.toFixed(1)),
+    reviewCount: reviews.length,
+    bestRating: 5,
+    worstRating: 1,
+  };
+}
+
+/**
+ * 지역 안내 페이지용 Service 스키마 + 후기/평점 중첩.
+ * 구글은 standalone AggregateRating을 무효 처리하므로 Service 내부에
+ * aggregateRating · review[]를 함께 담는다. (Review 리치 결과 대응)
+ */
+export function serviceAreaSchemaWithReviews(
   areaName: string,
+  path: string,
+  reviews: ReviewItem[],
+  displayAvg?: number
+) {
+  const base: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: `${areaName} 출장마사지·홈타이`,
+    serviceType: "출장마사지·홈타이 방문 관리 안내",
+    provider: { "@id": absoluteUrl("/#business") },
+    areaServed: { "@type": "Place", name: areaName },
+    url: absoluteUrl(path),
+  };
+  if (reviews.length > 0) {
+    base.aggregateRating = aggregateRatingNode(reviews, displayAvg);
+    base.review = reviews.map(reviewNode);
+  }
+  return base;
+}
+
+/**
+ * @deprecated standalone AggregateRating은 구글이 무효 처리.
+ * serviceAreaSchemaWithReviews를 사용하세요. (하위호환용으로만 유지)
+ */
+export function aggregateRatingSchema(
+  _areaName: string,
   reviews: ReviewItem[],
   displayAvg?: number
 ) {
   if (reviews.length === 0) return null;
-
-  const computed =
-    reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-  const avg = displayAvg ?? computed;
-
   return {
     "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    ratingValue: parseFloat(avg.toFixed(1)),
-    ratingCount: reviews.length,
-    bestRating: 5,
-    worstRating: 1,
+    ...aggregateRatingNode(reviews, displayAvg),
   };
 }

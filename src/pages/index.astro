@@ -2,9 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PriceTable from "../components/PriceTable.astro";
 import ProgramLinks from "../components/ProgramLinks.astro";
+import ReviewSection from "../components/ReviewSection.astro";
 import { SITE } from "../lib/site";
 import { sidos, services, prioritySigungus, stationsByGroup } from "../lib/data";
-import { breadcrumbSchema, faqSchema } from "../lib/seo";
+import { breadcrumbSchema, faqSchema, serviceAreaSchemaWithReviews } from "../lib/seo";
+import { reviewsForArea, ratingForArea } from "../lib/reviews";
 
 const title =
   "서울·경기·인천·부산 출장마사지｜지역별·지하철역별 홈타이 안내";
@@ -26,8 +28,18 @@ const faq = [
   },
 ];
 
+// 메인 대표 후기 — 전 지역 풀에서 시드 셔플로 8개 노출
+const homeReviews = reviewsForArea("seoul", "__home__", 8);
+const homeRating = ratingForArea("seoul", "__home__", homeReviews);
+
 const schema = [
   breadcrumbSchema([{ name: "홈", path: "/" }]),
+  serviceAreaSchemaWithReviews(
+    "서울·경기·인천·부산",
+    "/",
+    homeReviews,
+    homeRating.avg
+  ),
   faqSchema(faq),
 ];
 
@@ -312,6 +324,11 @@ const lifeAreas = sidos.flatMap((s) =>
       </div>
     </div>
   </section>
+
+  <!-- 고객 후기 -->
+  {homeReviews.length > 0 && (
+    <ReviewSection areaName="88서울마사지" reviews={homeReviews} displayRating={homeRating.avg} />
+  )}
 
   <!-- FAQ -->
   <section class="section section--soft">

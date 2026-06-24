@@ -18,8 +18,7 @@ import {
 import {
   breadcrumbSchema,
   faqSchema,
-  serviceAreaSchema,
-  aggregateRatingSchema,
+  serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
 
@@ -92,12 +91,9 @@ const rating = ratingForArea(sidoSlug, dongSeed, dongReviews);
 
 const schema = [
   breadcrumbSchema(crumbs),
-  serviceAreaSchema(`${dong.name} 출장마사지·홈타이`, path),
+  serviceAreaSchemaWithReviews(dong.name, path, dongReviews, rating.avg),
   faqSchema(faq),
-  ...(dongReviews.length > 0
-    ? [aggregateRatingSchema(dong.name, dongReviews, rating.avg)]
-    : []),
-].filter(Boolean);
+];
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>

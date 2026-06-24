@@ -18,8 +18,7 @@ import {
 import {
   breadcrumbSchema,
   faqSchema,
-  serviceAreaSchema,
-  aggregateRatingSchema,
+  serviceAreaSchemaWithReviews,
 } from "../lib/seo";
 import { reviewsForArea, ratingForArea } from "../lib/reviews";
 
@@ -82,12 +81,14 @@ const schema = [
     { name: city.regionName, path: cityPath },
     { name: gu.regionName, path },
   ]),
-  serviceAreaSchema(`${city.regionName} ${gu.regionName} 출장마사지·홈타이`, path),
+  serviceAreaSchemaWithReviews(
+    `${city.regionName} ${gu.regionName}`,
+    path,
+    guReviews,
+    rating.avg
+  ),
   faqSchema(faq),
-  ...(guReviews.length > 0
-    ? [aggregateRatingSchema(gu.regionName, guReviews, rating.avg)]
-    : []),
-].filter(Boolean);
+];
 ---
 
 <BaseLayout title={title} description={description} path={path} schema={schema}>
