@@ -2,9 +2,9 @@
 
 빙·네이버·얀덱스(IndexNow)와 구글(Indexing API)에 URL을 **즉시 색인 통보**하는 도구입니다.
 
-- 사이트 도메인: `patriciarepiciphysicaltherapy.com`
+- 사이트 도메인: `88-seoul-massage.netlify.app`
 - IndexNow 키: `7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b`
-- 키 파일(배포됨): `https://patriciarepiciphysicaltherapy.com/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt`
+- 키 파일(배포됨): `https://88-seoul-massage.netlify.app/7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b.txt`
 
 > ⚠️ **선행 조건**: 키 파일이 배포되어 실제 URL에서 200으로 열려야 IndexNow가 작동합니다.
 > 도메인 연결(Cloudflare Pages Custom domain) 완료 후 사용하세요.
@@ -23,18 +23,18 @@ pip install requests google-auth   # google-auth는 구글 API에만 필요
 ```bash
 python tools/indexnow.py
 ```
-인자 없이 실행하면 `patriciarepiciphysicaltherapy.com`의 `sitemap.xml` 전체 URL을
+인자 없이 실행하면 `88-seoul-massage.netlify.app`의 `sitemap.xml` 전체 URL을
 빙·네이버·얀덱스에 한 번에 통보합니다. (사이트맵이 실제 URL에서 열려야 함)
 
 ### 글 1개만 즉시 통보 (글 올릴 때마다)
 ```bash
-python tools/indexnow.py --urls https://patriciarepiciphysicaltherapy.com/area/seoul/gangnam-gu/
+python tools/indexnow.py --urls https://88-seoul-massage.netlify.app/area/seoul/gangnam-gu/
 ```
 여러 개도 가능:
 ```bash
 python tools/indexnow.py --urls \
-  https://patriciarepiciphysicaltherapy.com/area/busan/ \
-  https://patriciarepiciphysicaltherapy.com/area/busan/haeundae-gu/
+  https://88-seoul-massage.netlify.app/area/busan/ \
+  https://88-seoul-massage.netlify.app/area/busan/haeundae-gu/
 ```
 
 ## 2. 구글 Indexing API (구글 즉시 색인)
@@ -51,7 +51,7 @@ python tools/indexnow.py --urls \
 python tools/google_indexing_api.py
 
 # 글 1개
-python tools/google_indexing_api.py --urls https://patriciarepiciphysicaltherapy.com/area/seoul/
+python tools/google_indexing_api.py --urls https://88-seoul-massage.netlify.app/area/seoul/
 ```
 > 구글 Indexing API는 공식적으로 JobPosting·BroadcastEvent용이며 일반 페이지는
 > 일일 200 URL 쿼터가 있습니다. 일반 페이지의 가장 확실한 방법은 **Search Console에
@@ -87,9 +87,9 @@ npm run build && python tools/indexnow.py
 ## 설정 파일 `.env.local` (로컬 전용 · git 제외)
 
 ```
-INDEXNOW_DOMAIN=patriciarepiciphysicaltherapy.com
+INDEXNOW_DOMAIN=88-seoul-massage.netlify.app
 INDEXNOW_KEY=7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b
-SITEMAP_URL=https://patriciarepiciphysicaltherapy.com/sitemap.xml
+SITEMAP_URL=https://88-seoul-massage.netlify.app/sitemap.xml
 GOOGLE_CREDENTIALS=credentials/google-indexing-sa.json
 ```
 

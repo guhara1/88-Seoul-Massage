@@ -62,7 +62,7 @@ fi
 # 6. Sitemap 확인
 echo ""
 echo "🗺️  Sitemap 확인..."
-SITEMAP_URL="https://patriciarepiciphysicaltherapy.com/sitemap.xml"
+SITEMAP_URL="https://88-seoul-massage.netlify.app/sitemap.xml"
 if curl -s -o /dev/null -w "%{http_code}" "$SITEMAP_URL" | grep -q "200"; then
     echo -e "${GREEN}✓ Sitemap 접근 가능${NC}"
 else

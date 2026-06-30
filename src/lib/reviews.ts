@@ -101,3 +101,28 @@ export function ratingForArea(
     reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
   return { avg: Math.round(raw * 10) / 10, count: reviews.length };
 }
+
+/**
+ * 지역에 묶이지 않는 페이지(프로그램·서비스·생활권 등)용 후기 선별.
+ * 전체 후기 풀을 시드 기반으로 결정적 셔플해 count개를 뽑는다.
+ * 같은 시드(=같은 슬러그)는 항상 같은 후기 → 빌드 안정성 + 페이지별 변화.
+ */
+export function reviewsBySeed(seed: string, count = 6): Review[] {
+  const shuffled = deterministicShuffle(allReviews, seed);
+  const seen = new Set<string>();
+  const out: Review[] = [];
+  for (const r of shuffled) {
+    if (seen.has(r.id)) continue;
+    seen.add(r.id);
+    out.push(r);
+    if (out.length >= count) break;
+  }
+  return out;
+}
+
+/** reviewsBySeed 결과의 실제 평균 평점 (구조화 데이터 일관성 보장) */
+export function ratingFor(reviews: Review[]): { avg: number; count: number } {
+  if (reviews.length === 0) return { avg: 0, count: 0 };
+  const raw = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  return { avg: Math.round(raw * 10) / 10, count: reviews.length };
+}

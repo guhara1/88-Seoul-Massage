@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import PriceTable from "../../../components/PriceTable.astro";
 import ProgramLinks from "../../../components/ProgramLinks.astro";
+import ReviewSection from "../../../components/ReviewSection.astro";
 import { SITE, sidoName } from "../../../lib/site";
 import {
   lifeAreas,
@@ -10,7 +11,12 @@ import {
   stationByName,
   dongPathByName,
 } from "../../../lib/data";
-import { breadcrumbSchema, faqSchema, serviceAreaSchema } from "../../../lib/seo";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  serviceAreaSchemaWithReviews,
+} from "../../../lib/seo";
+import { reviewsForArea, ratingForArea } from "../../../lib/reviews";
 import { lifeAccess, lifeStation, lifeReserve } from "../../../lib/prose";
 
 export function getStaticPaths() {
@@ -45,6 +51,10 @@ const faq = [
   },
 ];
 
+// 생활권 후기 — 시도 풀에서 슬러그 시드로 6개 (지역 페이지와 동일 방식)
+const lifeReviews = reviewsForArea(l.sidoSlug, l.slug, 6);
+const lifeRating = ratingForArea(l.sidoSlug, l.slug, lifeReviews);
+
 const schema = [
   breadcrumbSchema([
     { name: "홈", path: "/" },
@@ -52,7 +62,12 @@ const schema = [
     { name: sido.regionName, path: `/area/${l.sidoSlug}/` },
     { name: l.name, path },
   ]),
-  serviceAreaSchema(`${l.name} 출장마사지·홈타이`, path),
+  serviceAreaSchemaWithReviews(
+    `${l.name} 출장마사지·홈타이`,
+    path,
+    lifeReviews,
+    lifeRating.avg
+  ),
   faqSchema(faq),
 ];
 ---
@@ -168,4 +183,12 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {lifeReviews.length > 0 && (
+    <ReviewSection
+      areaName={l.name}
+      reviews={lifeReviews}
+      displayRating={lifeRating.avg}
+    />
+  )}
 </BaseLayout>
