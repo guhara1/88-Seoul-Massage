@@ -2,9 +2,15 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import PriceTable from "../../components/PriceTable.astro";
+import ReviewSection from "../../components/ReviewSection.astro";
 import { SITE } from "../../lib/site";
-import { programs, getProgram } from "../../lib/data";
-import { breadcrumbSchema, faqSchema, absoluteUrl } from "../../lib/seo";
+import { programs, getProgram, prioritySigungus } from "../../lib/data";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  serviceSchemaWithReviews,
+} from "../../lib/seo";
+import { reviewsBySeed, ratingFor } from "../../lib/reviews";
 
 export function getStaticPaths() {
   return programs.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -17,6 +23,21 @@ const otherChips = others.slice(0, 12);
 const related = others.slice(0, 3);
 const kw = p.keywords ?? [];
 
+// 프로그램 × 지역 롱테일 내부링크 (예: "강남 스웨디시")
+const sidoLong = [
+  { slug: "seoul", name: "서울" },
+  { slug: "gyeonggi", name: "경기" },
+  { slug: "incheon", name: "인천" },
+  { slug: "busan", name: "부산" },
+].map((s) => ({
+  ...s,
+  gus: prioritySigungus(s.slug).slice(0, 5),
+}));
+
+// 프로그램 후기·평점 (전체 풀에서 슬러그 시드)
+const progReviews = reviewsBySeed(`program/${p.slug}`, 6);
+const progRating = ratingFor(progReviews);
+
 const title = `${p.name}｜${p.shortName} 출장마사지·홈타이 안내`;
 const description = p.summary;
 
@@ -26,16 +47,16 @@ const schema = [
     { name: "프로그램", path: "/program/" },
     { name: p.shortName, path },
   ]),
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: p.name,
-    serviceType: `${p.shortName} 방문 관리`,
-    description: p.summary,
-    provider: { "@id": absoluteUrl("/#business") },
-    areaServed: ["서울", "경기", "인천", "부산"],
-    url: absoluteUrl(path),
-  },
+  serviceSchemaWithReviews(
+    {
+      name: p.name,
+      serviceType: `${p.shortName} 방문 관리`,
+      description: p.summary,
+      path,
+    },
+    progReviews,
+    progRating.avg
+  ),
   faqSchema(p.faq),
 ];
 ---
@@ -84,6 +105,25 @@ const schema = [
         <a href="/station/">지하철역</a> · <a href="/life/">생활권</a> 페이지에서
         가까운 위치를 확인할 수 있습니다.
       </p>
+
+      <h3>지역별 {p.shortName} 안내</h3>
+      <p class="muted" style="font-size:0.9375rem">
+        자주 찾는 지역 기준으로 {p.shortName} 방문 가능 생활권을 확인하세요.
+      </p>
+      {
+        sidoLong.map((s) => (
+          <div style="margin:10px 0">
+            <strong style="font-size:0.9375rem">{s.name}</strong>
+            <div class="chip-list" style="margin-top:6px">
+              {s.gus.map((g) => (
+                <a class="chip chip--soft" href={`/area/${s.slug}/${g.regionSlug}/`}>
+                  {g.regionName} {p.shortName}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      }
       <p>
         {p.shortName}와 함께 살펴보면 좋은 관리로는
         {related.map((r, i) => (
@@ -144,4 +184,12 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {progReviews.length > 0 && (
+    <ReviewSection
+      areaName={`${p.shortName}`}
+      reviews={progReviews}
+      displayRating={progRating.avg}
+    />
+  )}
 </BaseLayout>

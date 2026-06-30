@@ -186,6 +186,41 @@ export function serviceAreaSchemaWithReviews(
 }
 
 /**
+ * 프로그램·서비스 등 지역에 묶이지 않는 페이지용 Service 스키마 + 후기/평점.
+ * 4대 권역 전체를 areaServed로 두고, aggregateRating · review[]를 중첩한다.
+ * (구글 Review 리치 결과 대응 — standalone AggregateRating 무효 회피)
+ */
+export function serviceSchemaWithReviews(
+  opts: {
+    name: string;
+    serviceType: string;
+    description: string;
+    path: string;
+    areaServed?: string[];
+  },
+  reviews: ReviewItem[],
+  displayAvg?: number
+) {
+  const base: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: opts.name,
+    serviceType: opts.serviceType,
+    description: clampDescription(opts.description, 160),
+    provider: { "@id": absoluteUrl("/#business") },
+    areaServed: (opts.areaServed ?? ["서울", "경기", "인천", "부산"]).map(
+      (name) => ({ "@type": "Place", name })
+    ),
+    url: absoluteUrl(opts.path),
+  };
+  if (reviews.length > 0) {
+    base.aggregateRating = aggregateRatingNode(reviews, displayAvg);
+    base.review = reviews.map(reviewNode);
+  }
+  return base;
+}
+
+/**
  * @deprecated standalone AggregateRating은 구글이 무효 처리.
  * serviceAreaSchemaWithReviews를 사용하세요. (하위호환용으로만 유지)
  */

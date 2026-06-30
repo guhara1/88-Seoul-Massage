@@ -15,7 +15,7 @@ import logging
 # ── 사이트 기본값 (무인자 실행 지원) ───────────────────────────────
 # `python tools/indexnow.py` 만 실행하면 아래 도메인의 전체 사이트맵을
 # 빙·네이버·얀덱스에 일괄 통보한다.
-DEFAULT_DOMAIN = "patriciarepiciphysicaltherapy.com"
+DEFAULT_DOMAIN = "88-seoul-massage.netlify.app"
 DEFAULT_KEY = "7a8d3c91-2f4e-4b7a-9d2e-1f3a5c8e7d2b"
 DEFAULT_SITEMAP = f"https://{DEFAULT_DOMAIN}/sitemap.xml"
 

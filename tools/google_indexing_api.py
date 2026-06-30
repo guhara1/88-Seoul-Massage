@@ -221,7 +221,7 @@ def main():
     parser.add_argument('--credentials', default='credentials/google-indexing-sa.json',
                         help='Path to Google Cloud service account JSON')
     parser.add_argument('--sitemap',
-                        default='https://patriciarepiciphysicaltherapy.com/sitemap.xml',
+                        default='https://88-seoul-massage.netlify.app/sitemap.xml',
                         help='Sitemap URL to extract URLs from')
     parser.add_argument('--urls', nargs='+', help='URLs to submit')
     parser.add_argument('--operation', default='URL_UPDATED', choices=['URL_UPDATED', 'URL_DELETED'],

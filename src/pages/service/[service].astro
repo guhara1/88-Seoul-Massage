@@ -1,9 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ReviewSection from "../../components/ReviewSection.astro";
 import { SITE } from "../../lib/site";
-import { services } from "../../lib/data";
-import { breadcrumbSchema, faqSchema, absoluteUrl } from "../../lib/seo";
+import { services, prioritySigungus } from "../../lib/data";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  serviceSchemaWithReviews,
+} from "../../lib/seo";
+import { reviewsBySeed, ratingFor } from "../../lib/reviews";
 import { serviceIntro, serviceNotice } from "../../lib/prose";
 
 export function getStaticPaths() {
@@ -32,22 +38,34 @@ const faq = [
   },
 ];
 
+// 서비스 × 지역 롱테일 내부링크
+const sidoLong = [
+  { slug: "seoul", name: "서울" },
+  { slug: "gyeonggi", name: "경기" },
+  { slug: "incheon", name: "인천" },
+  { slug: "busan", name: "부산" },
+].map((s) => ({ ...s, gus: prioritySigungus(s.slug).slice(0, 5) }));
+
+// 서비스 후기·평점 (전체 풀에서 슬러그 시드)
+const svReviews = reviewsBySeed(`service/${sv.slug}`, 6);
+const svRating = ratingFor(svReviews);
+
 const schema = [
   breadcrumbSchema([
     { name: "홈", path: "/" },
     { name: "서비스 안내", path: "/service/chuljang/" },
     { name: sv.name, path },
   ]),
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: sv.name,
-    serviceType: sv.focus,
-    description: sv.summary,
-    provider: { "@id": absoluteUrl("/#business") },
-    areaServed: ["서울", "경기", "인천", "부산"],
-    url: absoluteUrl(path),
-  },
+  serviceSchemaWithReviews(
+    {
+      name: sv.name,
+      serviceType: sv.focus,
+      description: sv.summary,
+      path,
+    },
+    svReviews,
+    svRating.avg
+  ),
   faqSchema(faq),
 ];
 ---
@@ -83,6 +101,28 @@ const schema = [
         </p>
       </div>
 
+      <h2>지역별 {sv.shortName} 안내</h2>
+      <p class="muted" style="font-size:0.9375rem">
+        서울·경기·인천·부산 주요 지역에서 {sv.shortName} 방문 가능 생활권을
+        확인하세요. 지역 페이지에서 가까운 동선을 살펴볼 수 있습니다.
+      </p>
+      {
+        sidoLong.map((s) => (
+          <div style="margin:10px 0">
+            <strong style="font-size:0.9375rem">
+              <a href={`/area/${s.slug}/`}>{s.name}</a>
+            </strong>
+            <div class="chip-list" style="margin-top:6px">
+              {s.gus.map((g) => (
+                <a class="chip chip--soft" href={`/area/${s.slug}/${g.regionSlug}/`}>
+                  {g.regionName} {sv.shortName}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+
       <h2>다른 서비스 안내</h2>
       <div class="chip-list">
         {
@@ -114,4 +154,12 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {svReviews.length > 0 && (
+    <ReviewSection
+      areaName={sv.shortName}
+      reviews={svReviews}
+      displayRating={svRating.avg}
+    />
+  )}
 </BaseLayout>
